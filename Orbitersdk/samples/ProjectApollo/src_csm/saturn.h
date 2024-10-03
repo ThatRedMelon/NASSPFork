@@ -1391,6 +1391,12 @@ protected:
 	///
 	bool SLAWillSeparate;
 
+	///
+	/// True if wide ELS-type SLA panels are installed.
+	/// \brief Use wide ELS-type SLA panels.
+	///
+	bool UseWideSLA;
+
 	bool SIMBayPanelJett;
 
 	bool DeleteLaunchSite;
@@ -4423,6 +4429,12 @@ protected:
 	double LMAscentFuelMassKg;	///< Mass of fuel in ascent stage of LEM.
 	double LMDescentEmptyMassKg;
 	double LMAscentEmptyMassKg;
+
+	//
+	// Custom Payload data.
+	//
+	double customPayloadMass;
+	char customPayloadClass[256];
 
 	//
 	// Random motion.
