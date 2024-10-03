@@ -1565,9 +1565,7 @@ protected:
 	int meshidxWasteDisposal;
 	int meshidxWasteDisposalAll;
 	UINT wasteDisposalAnim;
-	UINT wasteDisposalAnimAll;
 	AnimState wasteDisposalState;
-	AnimState wasteDisposalStateAll;
 
 /// Panel 382 Cover
 	int panel382CoverStatus = true;

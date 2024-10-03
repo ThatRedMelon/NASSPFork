@@ -1507,8 +1507,9 @@ void Saturn::clbkPreStep(double simt, double simdt, double mjd)
 
 
 
-	//By Jordan
+	// By Jordan
 	// ANIMATED MESHES
+/*
 	if (panel382CoverState.Opening()) {
 		double dp = simdt * 1.5;
 		panel382CoverState.Move(dp);
@@ -1528,42 +1529,58 @@ void Saturn::clbkPreStep(double simt, double simdt, double mjd)
 	};
 
 	if (wasteDisposalState.Opening()) {
-		double dp = simdt * 1.5;
-		wasteDisposalStateAll.action = AnimState::STOPPED;
+		double dp = simdt / 1.5; //  1.5 = Anim length in Seconds
 		wasteDisposalState.Move(dp);
 		SetAnimation(wasteDisposalAnim, wasteDisposalState.pos);
 		if (wasteDisposalState.pos >= 1.0) {
 			wasteDisposalState.action = AnimState::STOPPED;
-			wasteDisposalStateAll.action = AnimState::OPENING;
 		}
 	};
-	if (wasteDisposalStateAll.Opening() && wasteDisposalState.Stopped()) {
-		double dp = simdt * 1.5;
-		wasteDisposalStateAll.Move(dp);
-		SetAnimation(wasteDisposalAnimAll, wasteDisposalStateAll.pos);
-		if (wasteDisposalStateAll.pos >= 1.0) {
-			wasteDisposalStateAll.action = AnimState::STOPPED;
-		}
-	};
-	if (wasteDisposalStateAll.Closing()) {
-		double dp = simdt * 1.5;
-		wasteDisposalState.action = AnimState::STOPPED;
-		wasteDisposalStateAll.Move(dp);
-		SetAnimation(wasteDisposalAnimAll, wasteDisposalStateAll.pos);
-		if (wasteDisposalStateAll.pos <= 0.0) {
-			wasteDisposalStateAll.action = AnimState::STOPPED;
-			wasteDisposalState.action = AnimState::CLOSING;
-		}
-	};
-	if (wasteDisposalState.Closing() && wasteDisposalStateAll.Stopped()) {
-		double dp = simdt * 1.5;
+
+	if (wasteDisposalState.Closing()) {
+		double dp = simdt / 1.5;
 		wasteDisposalState.Move(dp);
 		SetAnimation(wasteDisposalAnim, wasteDisposalState.pos);
 		if (wasteDisposalState.pos <= 0.0) {
 			wasteDisposalState.action = AnimState::STOPPED;
 		}
 	};
-	
+*/
+	if (panel382CoverState.action == AnimState::CLOSING || panel382CoverState.action == AnimState::OPENING) {
+		double speed = 1.5; // Anim length in Seconds
+		double dp = oapiGetSimStep() * speed;
+		if (panel382CoverState.action == AnimState::CLOSING) {
+			if (panel382CoverState.pos > 0.0)
+				panel382CoverState.pos = max (0.0, panel382CoverState.pos-dp);
+			else
+				panel382CoverState.action = AnimState::CLOSED;
+		} else { // opening
+			if (panel382CoverState.pos < 1.0)
+				panel382CoverState.pos = min (1.0, panel382CoverState.pos+dp);
+			else
+				panel382CoverState.action = AnimState::OPEN;
+		}
+		SetAnimation (panel382CoverAnim, panel382CoverState.pos);
+	}
+
+	if (wasteDisposalState.action == AnimState::CLOSING || wasteDisposalState.action == AnimState::OPENING) {
+		double speed = 0.2; // Anim length in Seconds    0.1 = 10 Sec, 0.2 = 5 Sec, 1.0 = 1 Sec etc.
+		double dp = oapiGetSimStep() * speed;
+		if (wasteDisposalState.action == AnimState::CLOSING) {
+			if (wasteDisposalState.pos > 0.0)
+				wasteDisposalState.pos = max (0.0, wasteDisposalState.pos-dp);
+			else
+				wasteDisposalState.action = AnimState::CLOSED;
+		} else { // opening
+			if (wasteDisposalState.pos < 1.0)
+				wasteDisposalState.pos = min (1.0, wasteDisposalState.pos+dp);
+			else
+				wasteDisposalState.action = AnimState::OPEN;
+		}
+		SetAnimation (wasteDisposalAnim, wasteDisposalState.pos);
+	}
+
+
 	// By Jordan End
 
 

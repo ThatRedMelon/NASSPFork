@@ -1357,10 +1357,8 @@ void Saturn::SetAltimeterCover() {
 void Saturn::SetWasteDisposal() {
 	if (wasteDisposalStatus) {
 		wasteDisposalState.action = AnimState::OPENING;
-		wasteDisposalStateAll.action = AnimState::OPENING;
 	} else {
 		wasteDisposalState.action = AnimState::CLOSING;
-		wasteDisposalStateAll.action = AnimState::CLOSING;
 	}
 }
 
