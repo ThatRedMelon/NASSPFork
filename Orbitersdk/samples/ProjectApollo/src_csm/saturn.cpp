@@ -1502,58 +1502,15 @@ void Saturn::Undocking(int port)
 	UndockConnectors(port);
 }
 
-void Saturn::clbkPreStep(double simt, double simdt, double mjd)
-
+void Saturn::SetAnimations(double simdt)
 {
-	char buffer[100];
-	TRACESETUP("Saturn::clbkPreStep");
-	sprintf(buffer, "MissionTime %f, simt %f, simdt %f, time(0) %lld", MissionTime, simt, simdt, time(0)); 
-	TRACE(buffer);
-
-
-
 	// By Jordan
 	// ANIMATED MESHES
-/*
-	if (panel382CoverState.Opening()) {
-		double dp = simdt * 1.5;
-		panel382CoverState.Move(dp);
-		SetAnimation(panel382CoverAnim, panel382CoverState.pos);
-		if (panel382CoverState.pos >= 1.0) {
-			panel382CoverState.action = AnimState::STOPPED;
-		}
-	};
 
-	if (panel382CoverState.Closing()) {
-		double dp = simdt * 1.5;
-		panel382CoverState.Move(dp);
-		SetAnimation(panel382CoverAnim, panel382CoverState.pos);
-		if (panel382CoverState.pos <= 0.0) {
-			panel382CoverState.action = AnimState::STOPPED;
-		}
-	};
-
-	if (wasteDisposalState.Opening()) {
-		double dp = simdt / 1.5; //  1.5 = Anim length in Seconds
-		wasteDisposalState.Move(dp);
-		SetAnimation(wasteDisposalAnim, wasteDisposalState.pos);
-		if (wasteDisposalState.pos >= 1.0) {
-			wasteDisposalState.action = AnimState::STOPPED;
-		}
-	};
-
-	if (wasteDisposalState.Closing()) {
-		double dp = simdt / 1.5;
-		wasteDisposalState.Move(dp);
-		SetAnimation(wasteDisposalAnim, wasteDisposalState.pos);
-		if (wasteDisposalState.pos <= 0.0) {
-			wasteDisposalState.action = AnimState::STOPPED;
-		}
-	};
-*/
 	if (panel382CoverState.action == AnimState::CLOSING || panel382CoverState.action == AnimState::OPENING) {
-		double speed = 1.5; // Anim length in Seconds
-		double dp = oapiGetSimStep() * speed;
+		double speed = 0.5; // Anim length in Seconds
+		//double dp = oapiGetSimStep() * speed;
+		double dp = simdt / speed;
 		if (panel382CoverState.action == AnimState::CLOSING) {
 			if (panel382CoverState.pos > 0.0)
 				panel382CoverState.pos = max (0.0, panel382CoverState.pos-dp);
@@ -1569,8 +1526,9 @@ void Saturn::clbkPreStep(double simt, double simdt, double mjd)
 	}
 
 	if (wasteDisposalState.action == AnimState::CLOSING || wasteDisposalState.action == AnimState::OPENING) {
-		double speed = 0.2; // Anim length in Seconds    0.1 = 10 Sec, 0.2 = 5 Sec, 1.0 = 1 Sec etc.
-		double dp = oapiGetSimStep() * speed;
+		double speed = 1.0; // Anim length in Seconds **NOT SURE ABOUT THIS***
+		//double dp = oapiGetSimStep() * speed;
+		double dp = simdt / speed;
 		if (wasteDisposalState.action == AnimState::CLOSING) {
 			if (wasteDisposalState.pos > 0.0)
 				wasteDisposalState.pos = max (0.0, wasteDisposalState.pos-dp);
@@ -1585,10 +1543,18 @@ void Saturn::clbkPreStep(double simt, double simdt, double mjd)
 		SetAnimation (wasteDisposalAnim, wasteDisposalState.pos);
 	}
 
-
 	// By Jordan End
+}
 
+void Saturn::clbkPreStep(double simt, double simdt, double mjd)
 
+{
+	char buffer[100];
+	TRACESETUP("Saturn::clbkPreStep");
+	sprintf(buffer, "MissionTime %f, simt %f, simdt %f, time(0) %lld", MissionTime, simt, simdt, time(0)); 
+	TRACE(buffer);
+
+	SetAnimations(simdt);
 
 	//
 	// We die horribly if you set 100x or higher acceleration during launch.

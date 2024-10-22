@@ -993,6 +993,11 @@ void LEM::RegisterActiveAreas()
 		oapiVCSetAreaClickmode_Spherical(AID_VC_ROT_P1_01 + i, P1_ROT_POS[i] + ofs, 0.02);
 	}
 
+	// EVA Antenna
+	const VECTOR3 EVAAntHandleLoc = _V(-0.268539, 0.960945, -0.3565);						// Clickpoint Location ...
+	oapiVCRegisterArea(AID_VC_EVA_Ant_Handle, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);		// Area ...
+	oapiVCSetAreaClickmode_Spherical(AID_VC_EVA_Ant_Handle, EVAAntHandleLoc + ofs, 0.05);	// Area Mode of the Click point
+
 	// LMVC Lighting
     oapiVCRegisterArea(AID_LMVC_LIGHTING,  PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
 
@@ -1506,6 +1511,15 @@ void LEM::RegisterActiveAreas()
 bool LEM::clbkVCMouseEvent(int id, int event, VECTOR3 &p)
 {
 	switch (id) {
+		case AID_VC_EVA_Ant_Handle:
+			if (EVAAntHandleStatus) {
+				EVAAntHandleStatus = false;
+			} else {
+				EVAAntHandleStatus = true;
+			}
+			AnimEVAAntHandle();
+			return true;
+
 		case AID_VC_OVERHEADHATCH:
 			OverheadHatch.Toggle();
 			return true;
@@ -3243,6 +3257,16 @@ void LEM::DefineVCAnimations()
 	crossPointerLeft.DefineVCAnimations(vcidx, true);
 	crossPointerRight.DefineVCAnimations(vcidx, false);
 
+	// EVA Antenna Handle
+	static UINT EVAAntHandle[1] = { VC_GRP_EVA_Ant_Handle };
+	static MGROUP_TRANSLATE mshEVAAntHandlePull(vcidx, EVAAntHandle, 1, _V(0, -0.01, 0));
+	static MGROUP_ROTATE mshEVAAntHandleRotate(vcidx, EVAAntHandle, 1, _V(-0.268539, 0.960945, -0.3565), _V(0, 1, 0), (float)(180 * RAD));
+
+	EVAAntHandleAnim = CreateAnimation(0.0);
+
+	AddAnimationComponent(EVAAntHandleAnim, 0, 0.1, &mshEVAAntHandlePull);
+	AddAnimationComponent(EVAAntHandleAnim, 0.1, 1.0, &mshEVAAntHandleRotate);
+	
 	InitFDAI(vcidx);
 }
 

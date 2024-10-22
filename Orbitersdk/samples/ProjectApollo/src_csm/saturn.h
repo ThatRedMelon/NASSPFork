@@ -1291,6 +1291,7 @@ public:
 	mission::Mission *GetMission() { return pMission; }
 
 	void ClearMeshes();
+	void SetAnimations(double);
 
 protected:
 
