@@ -460,7 +460,7 @@ bool LM_PCM::TimingSignal() //Currently just looking for power from the PCM/TE c
 void LM_VHF::DefineAnimations(UINT idx)
 {
 	//EVA VHF Antenna Animation
-	//ANIMATIONCOMPONENT_HANDLE EVA_VHF;
+	ANIMATIONCOMPONENT_HANDLE EVA_VHF;
 	const VECTOR3 LM_VHF_PIVOT = { -0.35859, 1.3652, -0.89566 };	//Antenna Pivot Point
 	const VECTOR3 LM_VHF_SCALE = { -0.3588, 2.1558, -0.93309 };		//Antenna Cone Scale Point
 	static UINT meshgroup_vhf[3] = { AS_GRP_EVA_Ant, AS_GRP_EVA_AntTop, AS_GRP_EVA_AntCone };

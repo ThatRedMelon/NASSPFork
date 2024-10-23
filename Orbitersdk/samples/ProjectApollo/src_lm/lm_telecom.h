@@ -238,7 +238,6 @@ public:
 
 	//Animations
 	UINT anim_VHF;
-	MESHGROUP_TRANSFORM *cone;
 	double vhf_proc;
 	double vhf_proc_last;
 
