@@ -195,6 +195,7 @@ public:
 	void Init(LEM *vessel, h_HeatLoad *vhfh);	       // Initialization
 	void Timestep(double simt);        // TimeStep
 	void DefineAnimations(UINT idx);
+	void SetAnimation(double position);
 	void SystemTimestep(double simdt); // System Timestep
 	void LoadState(char *line);
 	void SaveState(FILEHANDLE scn);

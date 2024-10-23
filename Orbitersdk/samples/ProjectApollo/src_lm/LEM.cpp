@@ -1245,6 +1245,7 @@ void LEM::SetAnimations(double simdt) {
 				EVAAntHandleState.action = AnimState::OPEN;
 		}
 		SetAnimation(EVAAntHandleAnim, EVAAntHandleState.pos);
+		LEM::VHF.SetAnimation(EVAAntHandleState.pos);
 	}
 }
 
@@ -2106,6 +2107,7 @@ void LEM::DefineAnimations()
 {
 	// Call Animation Definitions where required
 	RR.DefineAnimations(ascidx);
+	VHF.DefineAnimations(ascidx);
 	SBandSteerable.DefineAnimations(ascidx);
 	OverheadHatch.DefineAnimations(ascidx);
 	ForwardHatch.DefineAnimations(ascidx);
