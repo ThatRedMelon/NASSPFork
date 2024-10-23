@@ -477,6 +477,7 @@ public:
 	void DrogueVis();
 	void HideProbes();
 	void HideDeflectors();
+	void HideCask();
 	void ShowXPointerShades();
 	void SetTrackLight();
 	void SetDockingLights();
@@ -1690,6 +1691,7 @@ protected:
 
 	DEVMESHHANDLE probes;
 	DEVMESHHANDLE deflectors;
+	DEVMESHHANDLE cask;
 	DEVMESHHANDLE drogue;
 	DEVMESHHANDLE cdrmesh;
 	DEVMESHHANDLE lmpmesh;

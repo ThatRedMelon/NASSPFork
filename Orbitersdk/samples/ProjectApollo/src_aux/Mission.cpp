@@ -514,6 +514,11 @@ namespace mission {
 		return bLMHasDeflectors;
 	}
 
+	bool Mission::LMHasCask() const
+	{
+		return bLMHasCask;
+	}
+
 	bool Mission::CSMHasHGA() const
 	{
 		return bCSMHasHGA;

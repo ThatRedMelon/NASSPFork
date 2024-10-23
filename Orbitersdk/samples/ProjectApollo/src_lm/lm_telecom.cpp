@@ -471,12 +471,12 @@ void LM_VHF::DefineAnimations(UINT idx)
 	lem->AddAnimationComponent(anim_VHF, 0, 0.7, &EVAAnt);
 	lem->AddAnimationComponent(anim_VHF, 0.7, 1, &EVACone);
 
-
+	lem->SetAnimation(anim_VHF, 1);
 
 }
 
-void LM_PCM::SystemTimestep(double simdt)
-{
+void LM_PCM::SystemTimestep(double simdt){
+
 	// PMP
 	if (lem->COMM_PMP_CB.Voltage() > 0) {
 		lem->COMM_PMP_CB.DrawPower(4.3);

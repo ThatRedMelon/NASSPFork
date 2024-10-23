@@ -4,7 +4,7 @@
 // ========================================================
 
 // Number of mesh groups:
-#define DS_NGRP 53
+#define DS_NGRP 62
 
 // Number of materials:
 #define DS_NMAT 13
@@ -67,3 +67,12 @@
 #define DS_GRP_LRAntenna 51
 #define DS_GRP_LRAntennaBlack 52
 #define DS_GRP_LRAntennaMount 53
+#define DS_GRP_LRBase 54
+#define DS_GRP_LRBaseFoil 55
+#define DS_GRP_LRBasePivot 56
+#define DS_GRP_LRShield 57
+#define DS_GRP_LRShieldMount 58
+#define DS_GRP_Cask 59
+#define DS_GRP_CaskFoil 60
+#define DS_GRP_Cask_Handle 61
+#define DS_GRP_CaskMount 62
