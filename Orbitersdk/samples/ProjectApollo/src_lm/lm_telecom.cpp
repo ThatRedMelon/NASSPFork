@@ -464,7 +464,7 @@ void LM_VHF::DefineAnimations(UINT idx)
 	const VECTOR3 LM_VHF_PIVOT = { -0.35859, 1.3652, -0.89566 };	//Antenna Pivot Point
 	const VECTOR3 LM_VHF_SCALE = { -0.3588, 2.1558, -0.93309 };		//Antenna Cone Scale Point
 	static UINT meshgroup_vhf[3] = { AS_GRP_EVA_Ant, AS_GRP_EVA_AntTop, AS_GRP_EVA_AntCone };
-	static MGROUP_ROTATE EVAAnt(idx, meshgroup_vhf, 3, LM_VHF_PIVOT, _V(0, 0, 1), (float)(RAD * 86));
+	static MGROUP_ROTATE EVAAnt(idx, meshgroup_vhf, 3, LM_VHF_PIVOT, _V(0, 0, 1), (float)(RAD * 84));
 	static UINT meshgroup_vhfcone = AS_GRP_EVA_AntCone;
 	static MGROUP_SCALE EVACone(idx, &meshgroup_vhfcone, 1, LM_VHF_SCALE, _V(-0.15, -0.15, 0));
 	anim_VHF = lem->CreateAnimation(1.0);
@@ -477,7 +477,9 @@ void LM_VHF::DefineAnimations(UINT idx)
 
 void LM_VHF::SetAnimation(double state)
 {
+	vhf_proc = anim_VHF;
 	lem->SetAnimation(anim_VHF, state);
+	vhf_proc_last = vhf_proc;
 }
 
 void LM_PCM::SystemTimestep(double simdt){
