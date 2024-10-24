@@ -239,8 +239,6 @@ public:
 
 	//Animations
 	UINT anim_VHF;
-	double vhf_proc;
-	double vhf_proc_last;
 
 };
 
