@@ -828,12 +828,35 @@ int LEM::clbkConsumeDirectKey(char* kstate)
 		}
 	}
 
+	// Override attitude controls
+	// I'm using the Orbiter thruster group enum for this but the attitude thruster group
+	// starts at a non-zero value. So I subtract the first enum from each entry
+	// to get a zero-based index.
+		aca_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD2) ? (KEYMOD_CONTROL(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP] =
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD8) ? (KEYMOD_CONTROL(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_deflection[THGROUP_ATT_BANKLEFT - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD4) ? (KEYMOD_CONTROL(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_deflection[THGROUP_ATT_BANKRIGHT - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD6) ? (KEYMOD_CONTROL(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_deflection[THGROUP_ATT_YAWLEFT - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD1) ? (KEYMOD_CONTROL(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_deflection[THGROUP_ATT_YAWRIGHT - THGROUP_ATT_PITCHUP] =
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD3) ? (KEYMOD_CONTROL(kstate)) ? 1.0 : 0.923 : 0.0;
+
+	// Prevent Orbiter from acting upon the attitude control keys.
+	RESETKEY(kstate, OAPI_KEY_NUMPAD2);
+	RESETKEY(kstate, OAPI_KEY_NUMPAD8);
+	RESETKEY(kstate, OAPI_KEY_NUMPAD4);
+	RESETKEY(kstate, OAPI_KEY_NUMPAD6);
+	RESETKEY(kstate, OAPI_KEY_NUMPAD1);
+	RESETKEY(kstate, OAPI_KEY_NUMPAD3);
+
 	return 0;
 }
 
 int LEM::clbkConsumeBufferedKey(DWORD key, bool down, char *keystate) {
-
-	// rewrote to get key events rather than monitor key state - LazyD
 
 	if (enableVESIM) vesim.clbkConsumeBufferedKey(key, down, keystate);
 
@@ -907,13 +930,6 @@ int LEM::clbkConsumeBufferedKey(DWORD key, bool down, char *keystate) {
 			if (dskyKeyChanged != nullptr) {
 				dskyKeyChanged->SetHeld(true);
 				dskyKeyChanged->SetState(PUSHBUTTON_PUSHED);
-			}
-
-			switch (key) {
-			case OAPI_KEY_K:
-				//kill rotation
-				SetAngularVel(_V(0, 0, 0));
-				break;
 			}
 		} else {
 			// KEY UP
