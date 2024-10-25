@@ -988,8 +988,8 @@ void LEM::JoystickTimestep(double simdt)
 			// No JS
 
 			// Roll
-			double rollLeft = aca_deflection[THGROUP_ATT_BANKLEFT - THGROUP_ATT_PITCHUP];
-			double rollRight = aca_deflection[THGROUP_ATT_BANKRIGHT - THGROUP_ATT_PITCHUP];
+			double rollLeft = aca_keyboard_deflection[THGROUP_ATT_BANKLEFT - THGROUP_ATT_PITCHUP];
+			double rollRight = aca_keyboard_deflection[THGROUP_ATT_BANKRIGHT - THGROUP_ATT_PITCHUP];
 			if (rollLeft > 0) {
 				rhc_pos[0] = (int)(32768 - rollLeft * 32768);
 			}
@@ -997,8 +997,8 @@ void LEM::JoystickTimestep(double simdt)
 				rhc_pos[0] = (int)(32768 + rollRight * 32768);
 			}
 			// Pitch
-			double pitchDown = aca_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP];
-			double pitchUp = aca_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP];
+			double pitchDown = aca_keyboard_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP];
+			double pitchUp = aca_keyboard_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP];
 			if (pitchDown > 0) {
 				rhc_pos[1] = (int)(32768 - pitchDown * 32768);
 			}
@@ -1006,8 +1006,8 @@ void LEM::JoystickTimestep(double simdt)
 				rhc_pos[1] = (int)(32768 + pitchUp * 32768);
 			}
 			// Yaw
-			double yawLeft = aca_deflection[THGROUP_ATT_YAWLEFT - THGROUP_ATT_PITCHUP];
-			double yawRight = aca_deflection[THGROUP_ATT_YAWRIGHT - THGROUP_ATT_PITCHUP];
+			double yawLeft = aca_keyboard_deflection[THGROUP_ATT_YAWLEFT - THGROUP_ATT_PITCHUP];
+			double yawRight = aca_keyboard_deflection[THGROUP_ATT_YAWRIGHT - THGROUP_ATT_PITCHUP];
 			if (yawLeft > 0) {
 				rhc_pos[2] = (int)(32768 + yawLeft * 32768);
 			}
