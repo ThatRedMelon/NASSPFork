@@ -740,7 +740,7 @@ void Saturn::SystemsInit() {
 	thc_rzx_id = -1; // Disabled
 	thc_pov_id = -1; // Disabled
 	thc_debug = -1;
-	rhc_debug = 1;
+	rhc_debug = -1;
 	rhc_thctoggle = false;
 	rhc_thctoggle_id = -1;
 	rhc_auto = false;
