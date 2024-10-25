@@ -834,7 +834,7 @@ int LEM::clbkConsumeDirectKey(char* kstate)
 	// to get a zero-based index.
 	// The value of 0.923 represents 92.3 percent deflection of the stick's full range,
 	// or 11.999 degrees, just shy of the hardover deflection switch.
-	if (!KEYMOD_CONTROL(kstate) && !KEYMOD_SHIFT(kstate)) {
+	if (!KEYMOD_CONTROL(kstate) && !KEYMOD_SHIFT(kstate) && GetAttitudeMode() == ATTITUDEMODE::ATTMODE_ROT) {
 		aca_keyboard_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP] = 
 			KEYDOWN(kstate, OAPI_KEY_NUMPAD2) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
 		aca_keyboard_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP] =
