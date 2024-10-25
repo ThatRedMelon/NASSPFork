@@ -828,32 +828,34 @@ int LEM::clbkConsumeDirectKey(char* kstate)
 		}
 	}
 
-	// Override attitude controls
+	// Override attitude controls, but only if that wouldn't interfere with our DSKY/DEDA shortcuts.
 	// I'm using the Orbiter thruster group enum for this but the attitude thruster group
 	// starts at a non-zero value. So I subtract the first enum from each entry
 	// to get a zero-based index.
 	// The value of 0.923 represents 92.3 percent deflection of the stick's full range,
 	// or 11.999 degrees, just shy of the hardover deflection switch.
-	aca_keyboard_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP] = 
-		KEYDOWN(kstate, OAPI_KEY_NUMPAD2) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
-	aca_keyboard_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP] =
-		KEYDOWN(kstate, OAPI_KEY_NUMPAD8) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
-	aca_keyboard_deflection[THGROUP_ATT_BANKLEFT - THGROUP_ATT_PITCHUP] = 
-		KEYDOWN(kstate, OAPI_KEY_NUMPAD4) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
-	aca_keyboard_deflection[THGROUP_ATT_BANKRIGHT - THGROUP_ATT_PITCHUP] = 
-		KEYDOWN(kstate, OAPI_KEY_NUMPAD6) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
-	aca_keyboard_deflection[THGROUP_ATT_YAWLEFT - THGROUP_ATT_PITCHUP] = 
-		KEYDOWN(kstate, OAPI_KEY_NUMPAD1) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
-	aca_keyboard_deflection[THGROUP_ATT_YAWRIGHT - THGROUP_ATT_PITCHUP] =
-		KEYDOWN(kstate, OAPI_KEY_NUMPAD3) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+	if (!KEYMOD_CONTROL(kstate) && !KEYMOD_SHIFT(kstate)) {
+		aca_keyboard_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD2) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_keyboard_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP] =
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD8) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_keyboard_deflection[THGROUP_ATT_BANKLEFT - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD4) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_keyboard_deflection[THGROUP_ATT_BANKRIGHT - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD6) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_keyboard_deflection[THGROUP_ATT_YAWLEFT - THGROUP_ATT_PITCHUP] = 
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD1) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+		aca_keyboard_deflection[THGROUP_ATT_YAWRIGHT - THGROUP_ATT_PITCHUP] =
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD3) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
 
-	// Prevent Orbiter from acting upon the attitude control keys.
-	RESETKEY(kstate, OAPI_KEY_NUMPAD2);
-	RESETKEY(kstate, OAPI_KEY_NUMPAD8);
-	RESETKEY(kstate, OAPI_KEY_NUMPAD4);
-	RESETKEY(kstate, OAPI_KEY_NUMPAD6);
-	RESETKEY(kstate, OAPI_KEY_NUMPAD1);
-	RESETKEY(kstate, OAPI_KEY_NUMPAD3);
+		// Prevent Orbiter from acting upon the attitude control keys
+		RESETKEY(kstate, OAPI_KEY_NUMPAD2);
+		RESETKEY(kstate, OAPI_KEY_NUMPAD8);
+		RESETKEY(kstate, OAPI_KEY_NUMPAD4);
+		RESETKEY(kstate, OAPI_KEY_NUMPAD6);
+		RESETKEY(kstate, OAPI_KEY_NUMPAD1);
+		RESETKEY(kstate, OAPI_KEY_NUMPAD3);
+	}
 
 	return 0;
 }
