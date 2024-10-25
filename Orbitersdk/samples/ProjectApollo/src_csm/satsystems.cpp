@@ -740,7 +740,7 @@ void Saturn::SystemsInit() {
 	thc_rzx_id = -1; // Disabled
 	thc_pov_id = -1; // Disabled
 	thc_debug = -1;
-	rhc_debug = -1;
+	rhc_debug = 1;
 	rhc_thctoggle = false;
 	rhc_thctoggle_id = -1;
 	rhc_auto = false;
@@ -1997,22 +1997,31 @@ void Saturn::JoystickTimestep()
 		// Use Orbiter's attitude control as RHC
 		} else {
 			// Roll
-			if (GetManualControlLevel(THGROUP_ATT_BANKLEFT) > 0) {
-				rhc_x_pos = (int) ((1. - GetManualControlLevel(THGROUP_ATT_BANKLEFT)) * 32768.);
-			} else if (GetManualControlLevel(THGROUP_ATT_BANKRIGHT) > 0) {
-				rhc_x_pos = (int) (32768. + GetManualControlLevel(THGROUP_ATT_BANKRIGHT) * 32768.);
+			double rollLeft = rhc_keyboard_deflection[THGROUP_ATT_BANKLEFT - THGROUP_ATT_PITCHUP];
+			double rollRight = rhc_keyboard_deflection[THGROUP_ATT_BANKRIGHT - THGROUP_ATT_PITCHUP];
+			if (rollLeft > 0) {
+				rhc_x_pos = (int)((1.0 - rollLeft) * 32768);
+			}
+			else if (rollRight > 0) {
+				rhc_x_pos = (int)(32768 + rollRight * 32768);
 			}
 			// Pitch
-			if (GetManualControlLevel(THGROUP_ATT_PITCHDOWN) > 0) {
-				rhc_y_pos = (int) ((1. - GetManualControlLevel(THGROUP_ATT_PITCHDOWN)) * 32768.);
-			} else if (GetManualControlLevel(THGROUP_ATT_PITCHUP) > 0) {
-				rhc_y_pos = (int) (32768. + GetManualControlLevel(THGROUP_ATT_PITCHUP) * 32768.);
+			double pitchDown = rhc_keyboard_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP];
+			double pitchUp = rhc_keyboard_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP];
+			if (pitchDown > 0) {
+				rhc_y_pos = (int)((1.0 - pitchDown) * 32768);
+			}
+			else if (pitchUp > 0) {
+				rhc_y_pos = (int)(32768 + pitchUp * 32768);
 			}
 			// Yaw
-			if (GetManualControlLevel(THGROUP_ATT_YAWLEFT) > 0) {
-				rhc_rot_pos = (int) ((1. - GetManualControlLevel(THGROUP_ATT_YAWLEFT)) * 32768.);
-			} else if (GetManualControlLevel(THGROUP_ATT_YAWRIGHT) > 0) {
-				rhc_rot_pos = (int) (32768. + GetManualControlLevel(THGROUP_ATT_YAWRIGHT) * 32768.);
+			double yawLeft = rhc_keyboard_deflection[THGROUP_ATT_YAWLEFT - THGROUP_ATT_PITCHUP];
+			double yawRight = rhc_keyboard_deflection[THGROUP_ATT_YAWRIGHT - THGROUP_ATT_PITCHUP];
+			if (yawLeft > 0) {
+				rhc_rot_pos = (int)((1.0 - yawLeft) * 32768);
+			}
+			else if (yawRight > 0) {
+				rhc_rot_pos = (int)(32768 + yawRight * 32768);
 			}
 		}
 
@@ -2059,7 +2068,7 @@ void Saturn::JoystickTimestep()
 		if (secs.rcsc.GetCMTransferMotor1() || secs.rcsc.GetCMTransferMotor2()) sm_sep = true;
 
 		if ((rhc_directv1 > SP_MIN_DCVOLTAGE || rhc_directv2 > SP_MIN_DCVOLTAGE)) {
-			if (rhc_x_pos < 2738) {
+			if (rhc1.GetMinusRollHardStopSwitch()) {
 				// MINUS ROLL
 				if (!sm_sep) {						
 					SetRCSState(RCS_SM_QUAD_A, 2, 1);
@@ -2107,7 +2116,7 @@ void Saturn::JoystickTimestep()
 				rjec.SetDirectRollActive(true); 
 				rflag = 1;
 			}
-			if (rhc_x_pos > 62798) {
+			if (rhc1.GetPlusRollHardStopSwitch()) {
 				// PLUS ROLL
 				if (!sm_sep) {
 					SetRCSState(RCS_SM_QUAD_A, 2, 0); 
@@ -2155,7 +2164,7 @@ void Saturn::JoystickTimestep()
 				rjec.SetDirectRollActive(true); 
 				rflag = 1;
 			}
-			if (rhc_y_pos < 2738) {
+			if (rhc1.GetMinusPitchHardStopSwitch()) {
 				// MINUS PITCH
 				if (!sm_sep) {
 					SetRCSState(RCS_SM_QUAD_C, 4, 1);
@@ -2195,7 +2204,7 @@ void Saturn::JoystickTimestep()
 				rjec.SetDirectPitchActive(true); 
 				pflag = 1;
 			}
-			if (rhc_y_pos > 62798) {
+			if (rhc1.GetPlusPitchHardStopSwitch()) {
 				// PLUS PITCH
 				if (!sm_sep) {
 					SetRCSState(RCS_SM_QUAD_C, 4, 0);
@@ -2235,7 +2244,7 @@ void Saturn::JoystickTimestep()
 				rjec.SetDirectPitchActive(true); 
 				pflag = 1;
 			}
-			if (rhc_rot_pos < 2738) {
+			if (rhc1.GetMinusYawHardStopSwitch()) {
 				// MINUS YAW
 				if (!sm_sep) {
 					SetRCSState(RCS_SM_QUAD_B, 4, 1);
@@ -2275,7 +2284,7 @@ void Saturn::JoystickTimestep()
 				rjec.SetDirectYawActive(true);
 				yflag = 1;
 			}
-			if (rhc_rot_pos > 62798) {
+			if (rhc1.GetPlusYawHardStopSwitch()) {
 				// PLUS YAW
 				if (!sm_sep) {
 					SetRCSState(RCS_SM_QUAD_D, 3, 1);
@@ -2364,7 +2373,7 @@ void Saturn::JoystickTimestep()
 		}
 		
 		if (rhc_debug != -1) { 
-			sprintf(oapiDebugString(),"RHC: X/Y/Z = %d / %d / %d | rzx_id %d rot_id %d", rhc_x_pos, rhc_y_pos, rhc_rot_pos, rhc_rzx_id, rhc_rot_id); 
+			sprintf(oapiDebugString(),"RHC: X/Y/Z = %d / %d / %d | rzx_id %d rot_id %d", rhc_x_pos, rhc_y_pos, rhc_rot_pos, rhc_rzx_id, rhc_rot_id);
 		}
 
 		//
