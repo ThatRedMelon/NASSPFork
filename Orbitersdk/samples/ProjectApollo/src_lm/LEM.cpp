@@ -832,21 +832,27 @@ int LEM::clbkConsumeDirectKey(char* kstate)
 	// I'm using the Orbiter thruster group enum for this but the attitude thruster group
 	// starts at a non-zero value. So I subtract the first enum from each entry
 	// to get a zero-based index.
-	// The value of 0.923 represents 92.3 percent deflection of the stick's full range,
-	// or 11.999 degrees, just shy of the hardover deflection switch.
-	if (!KEYMOD_CONTROL(kstate) && !KEYMOD_SHIFT(kstate) && GetAttitudeMode() == ATTITUDEMODE::ATTMODE_ROT) {
+	// Only override these keys if the user is holding no modifier keys, Alt only, or Ctrl + Alt.
+	if (GetAttitudeMode() == ATTITUDEMODE::ATTMODE_ROT && !(KEYMOD_CONTROL(kstate) && !KEYMOD_ALT(kstate)) && !KEYMOD_SHIFT(kstate)) {
+		// Possible deflection amounts are:
+		// No key modifiers: 11.5 degrees (max proportional rate, but not hardover)
+		// Alt: 13 degrees (full deflection, triggering hardover switches)
+		// Ctrl + Alt: 0.75 degrees (triggering out-of-detent switches, but not commanding thrust)
+		double deflectionDegrees = KEYMOD_ALT(kstate) ? KEYMOD_CONTROL(kstate) ? 0.75 : 13.0 : 11.5;
+		double deflectionPercent = deflectionDegrees / 13.0;
+
 		aca_keyboard_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP] = 
-			KEYDOWN(kstate, OAPI_KEY_NUMPAD2) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD2) ? deflectionPercent : 0.0;
 		aca_keyboard_deflection[THGROUP_ATT_PITCHDOWN - THGROUP_ATT_PITCHUP] =
-			KEYDOWN(kstate, OAPI_KEY_NUMPAD8) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD8) ? deflectionPercent : 0.0;
 		aca_keyboard_deflection[THGROUP_ATT_BANKLEFT - THGROUP_ATT_PITCHUP] = 
-			KEYDOWN(kstate, OAPI_KEY_NUMPAD4) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD4) ? deflectionPercent : 0.0;
 		aca_keyboard_deflection[THGROUP_ATT_BANKRIGHT - THGROUP_ATT_PITCHUP] = 
-			KEYDOWN(kstate, OAPI_KEY_NUMPAD6) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD6) ? deflectionPercent : 0.0;
 		aca_keyboard_deflection[THGROUP_ATT_YAWLEFT - THGROUP_ATT_PITCHUP] = 
-			KEYDOWN(kstate, OAPI_KEY_NUMPAD1) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD1) ? deflectionPercent : 0.0;
 		aca_keyboard_deflection[THGROUP_ATT_YAWRIGHT - THGROUP_ATT_PITCHUP] =
-			KEYDOWN(kstate, OAPI_KEY_NUMPAD3) ? (KEYMOD_ALT(kstate)) ? 1.0 : 0.923 : 0.0;
+			KEYDOWN(kstate, OAPI_KEY_NUMPAD3) ? deflectionPercent : 0.0;
 
 		// Prevent Orbiter from acting upon the attitude control keys
 		RESETKEY(kstate, OAPI_KEY_NUMPAD2);
@@ -865,7 +871,7 @@ int LEM::clbkConsumeBufferedKey(DWORD key, bool down, char *keystate) {
 	if (enableVESIM) vesim.clbkConsumeBufferedKey(key, down, keystate);
 
 	// DS20060404 Allow keys to control DSKY like in the CM
-	if (KEYMOD_SHIFT(keystate)) {
+	if (KEYMOD_SHIFT(keystate) && !KEYMOD_CONTROL(keystate) && !KEYMOD_ALT(keystate)) {
 		// Do DSKY stuff
 		DSKYPushSwitch* dskyKeyChanged = nullptr;
 		switch (key) {
@@ -945,7 +951,8 @@ int LEM::clbkConsumeBufferedKey(DWORD key, bool down, char *keystate) {
 		}
 		return 0;
 	}
-	else if (KEYMOD_CONTROL(keystate)) {
+
+	if (KEYMOD_CONTROL(keystate) && !KEYMOD_ALT(keystate) && !KEYMOD_SHIFT(keystate)) {
 		// Do DEDA stuff
 		DEDAPushSwitch* dedaKeyChanged = nullptr;
 		switch (key) {
