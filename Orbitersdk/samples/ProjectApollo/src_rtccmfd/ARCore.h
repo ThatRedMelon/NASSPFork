@@ -305,6 +305,7 @@ public:
 	bool manpad_ullage_opt; //true = 4 jets, false = 2 jets
 	int ManPADMPT; //1 = CSM, 3 = LEM
 	int ManPADMPTManeuver; //1-15
+	bool TLIPAD_StudyAid; //False = nominal TLI, true = study aid
 
 	//MAP UPDATE PAGE
 	AP10MAPUPDATE mapupdate;
@@ -330,6 +331,7 @@ public:
 	AP11LMASCPAD lmascentpad;
 	double t_LunarLiftoff;
 	int AscentPADVersion; //0 = Apollo 11-13, 1 = Apollo 14-17
+	double LAP_Phase, LAP_CR;
 
 	//Powered Descent Abort Program
 	int PDAPEngine;	//0 = DPS/APS, 1 = APS
