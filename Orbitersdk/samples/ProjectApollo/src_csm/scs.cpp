@@ -3941,7 +3941,7 @@ void ECA::TimeStep(double simdt) {
 		else
 			cmd_rate.z = errors.z;
 		
-		//Attitude error gain
+		//Attitude error gain (TODO: Is this actually rate error gain? It's driven by the RATE switch.)
 		if (R1K25)
 			cmd_rate.x *= 0.5;
 		else
@@ -4106,9 +4106,9 @@ void ECA::TimeStep(double simdt) {
 		rate_err.y = cmd_rate.y - (rate_damp.y + pseudorate.y);
 		rate_err.z = cmd_rate.z - (rate_damp.z + pseudorate.z);
 		
-		// sprintf(oapiDebugString(),"SCS: RATE CMD r%.3f p%.3f y%.3f ERR r%.3f p%.3f y%.3f",
-		//	cmd_rate.x * DEG, cmd_rate.y * DEG, cmd_rate.z * DEG, 
-		//	rate_err.x * DEG, rate_err.y * DEG, rate_err.z * DEG);	
+		 sprintf(oapiDebugString(),"SCS: RATE CMD r%.3f p%.3f y%.3f ERR r%.3f p%.3f y%.3f",
+			cmd_rate.x * DEG, cmd_rate.y * DEG, cmd_rate.z * DEG, 
+			rate_err.x * DEG, rate_err.y * DEG, rate_err.z * DEG);
 		// sprintf(oapiDebugString(),"SCS PITCH err %.4f rate %.3f cmd %.3f pseudo %.3f rate error %.3f", errors.y*DEG, pitchrate * DEG, cmd_rate.y * DEG, pseudorate.y * DEG, rate_err.y * DEG);
 		// sprintf(oapiDebugString(),"SCS ROLL rate %.3f cmd %.3f pseudo %.3f rate_err %.3f errors %.3f", rollrate * DEG, cmd_rate.x * DEG, pseudorate.x * DEG, rate_err.x * DEG, errors.x * DEG);
 		// sprintf(oapiDebugString(),"SCS YAW rate %.3f cmd %.3f pseudo %.3f rate_err %.3f errors %.3f", yawrate * DEG, cmd_rate.z * DEG, pseudorate.z * DEG, rate_err.z * DEG, errors.z * DEG);
@@ -4117,6 +4117,10 @@ void ECA::TimeStep(double simdt) {
 		// ROTATION
 		//
 
+		// Rate error deadband dependent on RATE switch on MDC-1. 0.2 deg/s or 2.0 deg/s for LOW and HIGH respectively.
+		// Our constant is the same regardless because we scale the inputs and not the deadband.
+		const double RATE_DEADBAND = 2.0 * RAD;
+
 		// Roll
 		switch(sat->ManualAttRollSwitch.GetState()){
 			case THREEPOSSWITCH_UP:
@@ -4124,7 +4128,7 @@ void ECA::TimeStep(double simdt) {
 				break;
 			case THREEPOSSWITCH_CENTER:  // RATE CMD
 				// Automatic mode and proportional-rate mode
-				if (rate_err.x > 0.034906585) {
+				if (rate_err.x > RATE_DEADBAND) {
 					// ACCEL PLUS
 					sat->rjec.SetThruster(9,1);
 					sat->rjec.SetThruster(11,1);
@@ -4136,7 +4140,7 @@ void ECA::TimeStep(double simdt) {
 					sat->rjec.SetThruster(16,0);
 					accel_roll_trigger=1; accel_roll_flag=1;
 				}
-				if (rate_err.x < -0.034906585) {
+				if (rate_err.x < -RATE_DEADBAND) {
 					// ACCEL MINUS
 					sat->rjec.SetThruster(10,1);
 					sat->rjec.SetThruster(12,1);
@@ -4179,7 +4183,7 @@ void ECA::TimeStep(double simdt) {
 				break;
 			case THREEPOSSWITCH_CENTER:  // RATE CMD
 				// Automatic mode and proportional-rate mode
-				if(rate_err.y > 0.034906585){
+				if(rate_err.y > RATE_DEADBAND){
 					// ACCEL PLUS
 					sat->rjec.SetThruster(1,1);
 					sat->rjec.SetThruster(3,1);
@@ -4187,7 +4191,7 @@ void ECA::TimeStep(double simdt) {
 					sat->rjec.SetThruster(4,0);
 					accel_pitch_trigger=1; accel_pitch_flag=1;
 				}
-				if(rate_err.y < -0.034906585){
+				if(rate_err.y < -RATE_DEADBAND){
 					// ACCEL MINUS
 					sat->rjec.SetThruster(2,1);
 					sat->rjec.SetThruster(4,1);
@@ -4222,7 +4226,7 @@ void ECA::TimeStep(double simdt) {
 				break;
 			case THREEPOSSWITCH_CENTER:  // RATE CMD
 				// Automatic mode and proportional-rate mode
-				if(rate_err.z > 0.034906585){
+				if(rate_err.z > RATE_DEADBAND){
 					// ACCEL PLUS
 					sat->rjec.SetThruster(5, 1);
 					sat->rjec.SetThruster(7, 1);
@@ -4230,7 +4234,7 @@ void ECA::TimeStep(double simdt) {
 					sat->rjec.SetThruster(8, 0);
 					accel_yaw_trigger=1; accel_yaw_flag=-1;
 				}
-				if(rate_err.z < -0.034906585){
+				if(rate_err.z < -RATE_DEADBAND){
 					// ACCEL MINUS
 					sat->rjec.SetThruster(6, 1);
 					sat->rjec.SetThruster(8, 1);
