@@ -3496,10 +3496,10 @@ int Saturn::clbkConsumeDirectKey(char *kstate)
 	// Only override these keys if the user is holding no modifier keys, Alt only, or Ctrl + Alt.
 	if (GetAttitudeMode() == ATTITUDEMODE::ATTMODE_ROT && !(KEYMOD_CONTROL(kstate) && !KEYMOD_ALT(kstate)) && !KEYMOD_SHIFT(kstate)) {
 		// Possible deflection amounts are:
-		// No key modifiers: 10.5 degrees (max proportional rate, but not hardover)
-		// Alt: 11.5 degrees (full deflection, triggering direct switches)
-		// Ctrl + Alt: 1.6 degrees (triggering breakout switches)
-		double deflectionDegrees = KEYMOD_ALT(kstate) ? KEYMOD_CONTROL(kstate) ? 1.6 : 11.5 : 10.5;
+		// No key modifiers: 10.5° (max proportional rate, but not hardover)
+		// Alt: 11.5° (full deflection, triggering direct switches)
+		// Ctrl + Alt: 1.51° (triggering breakout switches)
+		double deflectionDegrees = KEYMOD_ALT(kstate) ? KEYMOD_CONTROL(kstate) ? 1.51 : 11.5 : 10.5;
 		double deflectionPercent = deflectionDegrees / 11.5;
 
 		rhc_keyboard_deflection[THGROUP_ATT_PITCHUP - THGROUP_ATT_PITCHUP] =

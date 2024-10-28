@@ -835,9 +835,9 @@ int LEM::clbkConsumeDirectKey(char* kstate)
 	// Only override these keys if the user is holding no modifier keys, Alt only, or Ctrl + Alt.
 	if (GetAttitudeMode() == ATTITUDEMODE::ATTMODE_ROT && !(KEYMOD_CONTROL(kstate) && !KEYMOD_ALT(kstate)) && !KEYMOD_SHIFT(kstate)) {
 		// Possible deflection amounts are:
-		// No key modifiers: 11.5 degrees (max proportional rate, but not hardover)
-		// Alt: 13 degrees (full deflection, triggering hardover switches)
-		// Ctrl + Alt: 0.75 degrees (triggering out-of-detent switches, but not commanding thrust)
+		// No key modifiers: 11.5° (max proportional rate, but not hardover)
+		// Alt: 13° (full deflection, triggering hardover switches)
+		// Ctrl + Alt: 0.75° (triggering out-of-detent switches, but not commanding thrust)
 		double deflectionDegrees = KEYMOD_ALT(kstate) ? KEYMOD_CONTROL(kstate) ? 0.75 : 13.0 : 11.5;
 		double deflectionPercent = deflectionDegrees / 13.0;
 
