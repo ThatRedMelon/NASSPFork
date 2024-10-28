@@ -62,20 +62,20 @@ void RHC::Timestep(int* rhc_pos, bool normdc, bool normac, bool dirdcab, bool di
 	//Proportional Rate
 	if (normac)
 	{
-		// Proportional rate scales from 1° to 10° deflection.
+		// Proportional rate scales from 1.5° to 10° deflection.
 		for (int i = 0; i < 3; i++)
 		{
 			if (deflection.data[i] >= 0.0)
 			{
-				PropRate.data[i] = min(1.0, max(0.0, (deflection.data[i] - 1.0) / 9.0));
+				PropRate.data[i] = min(1.0, max(0.0, (deflection.data[i] - 1.5) / 8.5));
 			}
 			else
 			{
-				PropRate.data[i] = min(0.0, max(-1.0, (deflection.data[i] + 1.0) / 9.0));
+				PropRate.data[i] = min(0.0, max(-1.0, (deflection.data[i] + 1.5) / 8.5));
 			}
 		}
 
-		//sprintf(oapiDebugString(), "Proportional Rate: X/Y/Z = %f / %f / %f", PropRate.x, PropRate.y, PropRate.z);
+		//sprintf(oapiDebugString(), "Proportional Rate: X/Y/Z = %f / %f / %f | %f° / %f° / %f°", PropRate.x, PropRate.y, PropRate.z, deflection.x, deflection.y, deflection.z);
 	}
 	else
 	{

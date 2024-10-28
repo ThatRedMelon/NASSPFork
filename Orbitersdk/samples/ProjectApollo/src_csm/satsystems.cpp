@@ -2031,10 +2031,8 @@ void Saturn::JoystickTimestep()
 
 		// X and Y are well-duh kinda things. X=0 for full-left, Y = 0 for full-down
 		// Set bits according to joystick state. 32768 is center, so 16384 is the left half.
-		// The real RHC had a 12 degree travel. Our joystick travels 32768 points to full deflection.
-		// This means 2730 points per degree travel. The RHC breakout switches trigger at 1.5 degrees deflection and
-		// stop at 11. So from 36863 to 62798, we trigger plus, and from 28673 to 2738 we trigger minus.
-		// The last degree of travel is reserved for the DIRECT control switches.
+		// The real RHC had a 11.5 degree travel. Our joystick travels 32768 points to full deflection.
+		// The RHC breakout switches trigger at 1.5 degrees deflection and soft stop at 10.
 		if (rhc_voltage1 > SP_MIN_DCVOLTAGE || rhc_voltage2 > SP_MIN_DCVOLTAGE) { // NORMAL
 			// CMC
 			if (rhc1.GetMinusRollBreakoutSwitch()) {
