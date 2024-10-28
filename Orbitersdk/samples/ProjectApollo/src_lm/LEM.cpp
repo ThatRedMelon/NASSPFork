@@ -1932,6 +1932,17 @@ void LEM::GetScenarioState(FILEHANDLE scn, void *vs)
 		else if (!strnicmp(line, "EVENTTIMER_START", sizeof("EVENTTIMER_START"))) {
 			EventTimerDisplay.LoadState(scn, EVENTTIMER_END_STRING);
 		}
+		else if (!strnicmp(line, "EVAANTENNAHANDLE", 16)) {
+			sscanf(line + 16, "%i", &EVAAntHandleStatus);
+			if (EVAAntHandleStatus) {
+				EVAAntHandleState.pos = 1.0;    // This is for the Handle
+
+				// Maybe you need to add here the ".pos" for the Antenna too.
+				// One more thing. The antenna can be seen for one frame when
+				// the simulation is started in pause mode.
+
+			}
+			}
 		else if (!strnicmp(line, "<INTERNALS>", 11)) { //INTERNALS signals the PanelSDK part of the scenario
 			Panelsdk.Load(scn);			//send the loading to the Panelsdk
 		}
@@ -2262,6 +2273,7 @@ void LEM::clbkSaveState (FILEHANDLE scn)
 	oapiWriteScenario_int(scn, "COASRETICLEVISIBLE", COASreticlevisible);
 
 	oapiWriteScenario_int(scn, "WINDOWSHADESENABLED", LEMWindowShades);
+	oapiWriteScenario_int(scn, "EVAANTENNAHANDLE", EVAAntHandleStatus);
 
 	oapiWriteScenario_float (scn, "DSCFUEL", DescentFuelMassKg);
 	oapiWriteScenario_float (scn, "ASCFUEL", AscentFuelMassKg);
