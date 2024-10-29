@@ -3941,7 +3941,7 @@ void ECA::TimeStep(double simdt) {
 		else
 			cmd_rate.z = errors.z;
 		
-		//Attitude error gain (TODO: Is this actually rate error gain? It's driven by the RATE switch.)
+		// Attitude error gain
 		if (R1K25)
 			cmd_rate.x *= 0.5;
 		else
