@@ -78,7 +78,7 @@ void RHC::Timestep(int* rhc_pos, bool normdc, bool normac, bool dirdcab, bool di
 			}
 		}
 
-		sprintf(oapiDebugString(), "Proportional Rate: X/Y/Z = %f / %f / %f | %f° / %f° / %f°", PropRate.x, PropRate.y, PropRate.z, deflection.x, deflection.y, deflection.z);
+		//sprintf(oapiDebugString(), "Proportional Rate: X/Y/Z = %f / %f / %f | %f° / %f° / %f°", PropRate.x, PropRate.y, PropRate.z, deflection.x, deflection.y, deflection.z);
 	}
 	else
 	{
