@@ -1000,6 +1000,18 @@ void Saturn::initSaturn()
 	FovSave = 0;
 
 	//
+	// Flashlight
+	//
+	flashlight = 0;
+	flashlightColor = { 1,1,1,0 };
+	flashlightColor2 = { 0,0,0,0 };
+	flashlightPos = { 0,0,0 };
+	vesselPosGlobal = { 0,0,0 };
+	flashlightDirGlobal = { 0,0,1 };
+	flashlightDirLocal = { 0,0,1 };
+	flashlightOn = 0;
+
+	//
 	// Save the last view offset set.
 	//
 
@@ -1627,6 +1639,11 @@ void Saturn::clbkPreStep(double simt, double simdt, double mjd)
 
 	if (oapiGetFocusObject() == GetHandle()) {
 		dsky.SendNetworkPacketDSKY();
+	}
+
+	if ((oapiGetFocusObject() == GetHandle()) && (oapiCockpitMode() == COCKPIT_VIRTUAL) && (oapiCameraMode() == CAM_COCKPIT)) {
+		//We have focus on this vessel, and are in the VC
+		MoveFlashlight();
 	}
 
 	sprintf(buffer, "End time(0) %lld", time(0)); 
@@ -3758,6 +3775,10 @@ int Saturn::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
 				agc.SetInputChannelBit(016,MarkReject,0);
 				return 1;
 		}
+	}
+
+	if ((down) && (key == OAPI_KEY_F)) {
+		ToggleFlashlight();
 	}
 
 	// MCC CAPCOM interface key handling                                                                                                
