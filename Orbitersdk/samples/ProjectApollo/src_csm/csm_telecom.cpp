@@ -2238,12 +2238,7 @@ unsigned char PCM::measure(int channel, int type, int ccode){
 							sat->GetRCSStatus( RCS_CM_RING_2, rcsStatus );
 							return(scale_data(rcsStatus.HeliumPressurePSI, 0, 5000));
 						case 22:		// DOCKING PROBE TEMP
-							if (sat->HasProbe == false || sat->dockingprobe.IsHardDocked()) //TBD: Voltage code should be dealt with elsewhere for when probe not installed/attached
-							{
-								return (0.0);
-							}
-							else
-								return(scale_data(sat->DockProbeTempSensor.Voltage(), 0.0, 5.0));
+							return(scale_data(sat->DockProbeTempSensor.Voltage(), 0.0, 5.0));
 						case 23:		// UNKNOWN - HBR ONLY
 							return(0);
 						case 24:		// SM HE TK A PRESS

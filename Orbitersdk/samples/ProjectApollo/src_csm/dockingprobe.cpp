@@ -101,6 +101,25 @@ DockingProbe::~DockingProbe()
 	// Nothing for now.
 }
 
+void DockingProbe::Init(Saturn *s)
+{
+	saturn = s;
+	DockProbe = (h_Radiator *)saturn->Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBE");
+}
+
+bool DockingProbe::IsInstalled()
+
+{
+	if (OurVessel->HasProbe == false || IsHardDocked())
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
 void DockingProbe::Extend()
 
 {
@@ -361,11 +380,26 @@ void DockingProbe::UpdatePort(VECTOR3 off,double simdt)
 }  
 
 
-void DockingProbe::SystemTimestep(double simdt) 
+void DockingProbe::SystemTimestep(double simdt)
 
 {
 	if (ExtendingRetracting) {
-		DCPower.DrawPower(100.0);	// The real power consumption is unknown yet
+		DCPower.DrawPower(100.0);	// The real power consumption is unknown yet, max would be 240W (10A*28V)
+	}
+
+	if (!IsInstalled())
+	{
+		DockProbe->SetTemp(291.483); //65F estimated temperature after being in cabin
+		DockProbe->rad = 0.0;
+
+		saturn->DockProbeTempSensor.WireTo(NULL);
+	}
+
+	else
+	{
+		DockProbe->rad = 0.04;
+
+		saturn->DockProbeTempSensor.WireTo(&saturn->Panel276CB2);
 	}
 }
 
