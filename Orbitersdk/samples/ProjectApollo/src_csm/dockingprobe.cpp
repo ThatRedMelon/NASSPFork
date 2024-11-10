@@ -387,7 +387,7 @@ void DockingProbe::SystemTimestep(double simdt)
 		DCPower.DrawPower(100.0);	// The real power consumption is unknown yet, max would be 240W (10A*28V)
 	}
 
-	if (!IsInstalled())
+	if (!IsInstalled() || !IsPowered())
 	{
 		DockProbe->SetTemp(291.483); //65F estimated temperature after being in cabin
 		DockProbe->rad = 0.0;
