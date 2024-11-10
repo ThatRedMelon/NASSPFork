@@ -1157,10 +1157,12 @@ void Saturn::SystemsTimestep(double simt, double simdt, double mjd) {
 //------------------------------------------------------------------------------------
 
 // Structure Temperature Debug Lines
+	/*
+	double *DockProbeTemp = (double *)Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBE:TEMP");
+	int *DockProbeHX = (int *)Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBEINCABIN:PUMP");
 
-	//double *DockProbeTemp = (double *)Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBE:TEMP");
-
-	//sprintf(oapiDebugString(), "Volts: %.2f Temp: %.4f Installed: %lf", DockProbeTempSensor.Voltage(), KelvinToFahrenheit(*DockProbeTemp), dockingprobe.IsInstalled());
+	//sprintf(oapiDebugString(), "Volts: %.2f Temp: %.4f Installed: %d HX: %d", DockProbeTempSensor.Voltage(), KelvinToFahrenheit(*DockProbeTemp), dockingprobe.IsInstalled(), *DockProbeHX);
+	*/
 
 // GSE Cryo Debug Lines
 	/*

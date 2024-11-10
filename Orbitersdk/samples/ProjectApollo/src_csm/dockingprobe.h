@@ -101,6 +101,7 @@ protected:
 	bool UndockNextTimestep;
 
 	h_Radiator *DockProbe;
+	h_HeatExchanger *DockProbeHX;
 
 	///
 	/// Number of docking events to ignore. This is required in special cases, such as LEM creation, and

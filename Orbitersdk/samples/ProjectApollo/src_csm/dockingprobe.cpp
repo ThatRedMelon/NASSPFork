@@ -105,6 +105,7 @@ void DockingProbe::Init(Saturn *s)
 {
 	saturn = s;
 	DockProbe = (h_Radiator *)saturn->Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBE");
+	DockProbeHX = (h_HeatExchanger *)saturn->Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBEINCABIN");
 }
 
 bool DockingProbe::IsInstalled()
@@ -387,18 +388,25 @@ void DockingProbe::SystemTimestep(double simdt)
 		DCPower.DrawPower(100.0);	// The real power consumption is unknown yet, max would be 240W (10A*28V)
 	}
 
-	if (!IsInstalled() || !IsPowered())
+	if (!IsInstalled())
 	{
-		DockProbe->SetTemp(291.483); //65F estimated temperature after being in cabin
+		DockProbeHX->SetPumpOn();
 		DockProbe->rad = 0.0;
-
-		saturn->DockProbeTempSensor.WireTo(NULL);
+		DockProbe->isolation = 0.0;
 	}
-
 	else
 	{
+		DockProbeHX->SetPumpOff();
 		DockProbe->rad = 0.04;
+		DockProbe->isolation = 0.001;
+	}
 
+	if (!IsPowered())
+	{
+		saturn->DockProbeTempSensor.WireTo(NULL);
+	}
+	else
+	{
 		saturn->DockProbeTempSensor.WireTo(&saturn->Panel276CB2);
 	}
 }
