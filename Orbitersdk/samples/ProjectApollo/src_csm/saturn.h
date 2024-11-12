@@ -1639,7 +1639,15 @@ protected:
 	int meshidxaltimeterCover;
 	UINT altimeterCoverAnim;
 	AnimState altimeterCoverState;
-	
+
+/// Ordeal
+	int ordealStatus;
+	double ordealProc;
+	int meshidxOrdeal;
+	UINT ordealAnim;
+	AnimState ordealState;
+
+
 /// END TEST by JORDAN
 
 	///
