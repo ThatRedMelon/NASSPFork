@@ -5316,12 +5316,13 @@ void Saturn::SetVCLighting(UINT meshidx, int material, int EmissionMode, double 
 
 void Saturn::UpdateFloodLights()
 {
-	GetCameraOffset(flashlightPos);
+	VECTOR3 camPos;
 	VECTOR3 ofs;
+	GetCameraOffset(camPos);
 	GetMeshOffset(vcidx, ofs); // First get or VC Offset
 
 	// Debug string for finding Camera and VC mesh Position
-	sprintf(oapiDebugString(), "%.3f  %.3f  %.3f ** %.3f  %.3f  %.3f ", flashlightPos.x, flashlightPos.y, flashlightPos.z, ofs.x, ofs.y, ofs.z );
+	//sprintf(oapiDebugString(), "%.3f  %.3f  %.3f ** %.3f  %.3f  %.3f ", camPos.x, camPos.y, camPos.z, ofs.x, ofs.y, ofs.z );
 
 	// Set the Floodlights 
 	floodLight_P5->SetPosition(ofs + floodLightPos_P5);
