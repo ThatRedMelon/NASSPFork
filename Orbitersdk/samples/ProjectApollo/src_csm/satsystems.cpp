@@ -562,7 +562,7 @@ void Saturn::SystemsInit() {
 	UrineDumpTempSensor.Init(&Panel276CB2, (h_Tank*)Panelsdk.GetPointerByString("HYDRAULIC:URINEDUMPNOZZLE"));
 
 	dockingprobe.Init(this);
-	DockProbeTempSensor.Init(&Panel276CB2, (h_Tank *)Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBE"));
+	DockProbeTempSensor.Init(&Panel276CB2, (h_Radiator *)Panelsdk.GetPointerByString("HYDRAULIC:DOCKPROBE"));
 
 	// Optics initialization
 	optics.Init(this);
