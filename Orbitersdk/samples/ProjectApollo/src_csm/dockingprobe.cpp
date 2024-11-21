@@ -397,7 +397,7 @@ void DockingProbe::SystemTimestep(double simdt)
 	else
 	{
 		DockProbeHX->SetPumpOff();
-		DockProbe->rad = 0.04;
+		DockProbe->rad = 0.6;
 		DockProbe->isolation = 0.001;
 	}
 
