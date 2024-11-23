@@ -1608,7 +1608,7 @@ void Saturn::SetAnimations(double simdt)
 	}
 
 	if (ordealState.action == AnimState::CLOSING || ordealState.action == AnimState::OPENING) {
-		double speed = 2.0; // Anim length in Seconds
+		double speed = 3.0; // Anim length in Seconds
 		double dp = simdt / speed;
 		if (ordealState.action == AnimState::CLOSING) {
 			if (ordealState.pos > 0.0)
