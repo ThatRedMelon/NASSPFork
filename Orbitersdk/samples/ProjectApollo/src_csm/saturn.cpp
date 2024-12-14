@@ -553,7 +553,7 @@ Saturn::Saturn(OBJHANDLE hObj, int fmodel) : ProjectApolloConnectorVessel (hObj,
 	SPSOxidizerFeedTempSensor("SPS-Oxidizer-Feed-Temp-Sensor", 0.0, 200.0),
 	SPSEngVlvTempSensor("SPS-Engine-Valve-Temp-Sensor", 0.0, 200.0),
 	vesim(&cbCSMVesim, this),
-	CueCards(vcidx, this, 11),
+	CueCards(vcidx, this, 17),
 	Failures(this)
 #pragma warning ( pop ) // disable:4355
 

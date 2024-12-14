@@ -1647,6 +1647,32 @@ void Saturn::RegisterActiveAreas() {
 	// Antenna locations
 	oapiVCRegisterArea(AID_VC_CUE_CARD_LOCATION_11, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
 	oapiVCSetAreaClickmode_Quadrilateral(AID_VC_CUE_CARD_LOCATION_11, _V(0.344100, 0.560850, 0.304682) + ofs, _V(0.364100, 0.560850, 0.304682) + ofs, _V(0.344100, 0.541883, 0.298337) + ofs, _V(0.364100, 0.541883, 0.298337) + ofs);
+
+	// Fix these clickspots
+
+	// Above G-Meter
+	oapiVCRegisterArea(AID_VC_CUE_CARD_LOCATION_12, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	oapiVCSetAreaClickmode_Quadrilateral(AID_VC_CUE_CARD_LOCATION_12, _V(-0.749, 0.787, 0.386709) + ofs, _V(-0.709, 0.787, 0.386709) + ofs, _V(-0.749, 0.747, 0.296709) + ofs, _V(-0.709, 0.747, 0.296709) + ofs);
+
+	// Above RCS selector
+	oapiVCRegisterArea(AID_VC_CUE_CARD_LOCATION_13, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	oapiVCSetAreaClickmode_Quadrilateral(AID_VC_CUE_CARD_LOCATION_13, _V(-0.02, 0.812, 0.386709) + ofs, _V(0.06, 0.812, 0.386709) + ofs, _V(-0.02, 0.786, 0.296709) + ofs, _V(0.06, 0.786, 0.296709) + ofs);
+
+	// Covering HGA Controls
+	oapiVCRegisterArea(AID_VC_CUE_CARD_LOCATION_14, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	oapiVCSetAreaClickmode_Quadrilateral(AID_VC_CUE_CARD_LOCATION_14, _V(0.180, 0.400, 0.356709) + ofs, _V(0.250, 0.400, 0.356709) + ofs, _V(0.180, 0.380, 0.296709) + ofs, _V(0.250, 0.380, 0.296709) + ofs);
+
+	// Covering floodlight
+	oapiVCRegisterArea(AID_VC_CUE_CARD_LOCATION_15, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	oapiVCSetAreaClickmode_Quadrilateral(AID_VC_CUE_CARD_LOCATION_15, _V(0.193, 1.000, -0.156) + ofs, _V(0.385, 1.000, -0.156) + ofs, _V(0.193, 0.805, -0.04) + ofs, _V(0.385, 0.805, -0.04) + ofs);
+
+	// Next to panel 229
+	oapiVCRegisterArea(AID_VC_CUE_CARD_LOCATION_16, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	oapiVCSetAreaClickmode_Quadrilateral(AID_VC_CUE_CARD_LOCATION_16, _V(1.0, 0.100, -0.044) + ofs, _V(1.06, 0.100, -0.044) + ofs, _V(1.0, 0.4, -0.15) + ofs, _V(1.06, 0.4, -0.15) + ofs);
+
+	// Above window 5
+	oapiVCRegisterArea(AID_VC_CUE_CARD_LOCATION_17, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	oapiVCSetAreaClickmode_Quadrilateral(AID_VC_CUE_CARD_LOCATION_17, _V(0.870, 0.812, 0.10) + ofs, _V(1.0, 0.812, 0.10) + ofs, _V(0.870, 1.0, -0.15) + ofs, _V(1.0, 1.0, -0.15) + ofs);
 }
 
 // --------------------------------------------------------------
@@ -1784,6 +1810,12 @@ bool Saturn::clbkVCMouseEvent (int id, int event, VECTOR3 &p)
 	case AID_VC_CUE_CARD_LOCATION_9:
 	case AID_VC_CUE_CARD_LOCATION_10:
 	case AID_VC_CUE_CARD_LOCATION_11:
+	case AID_VC_CUE_CARD_LOCATION_12:
+	case AID_VC_CUE_CARD_LOCATION_13:
+	case AID_VC_CUE_CARD_LOCATION_14:
+	case AID_VC_CUE_CARD_LOCATION_15:
+	case AID_VC_CUE_CARD_LOCATION_16:
+	case AID_VC_CUE_CARD_LOCATION_17:
 		CueCards.CycleCueCard(id - AID_VC_CUE_CARD_LOCATION_1);
 		return true;
 	}
@@ -5371,7 +5403,7 @@ void Saturn::UpdateFloodLights()
 	GetMeshOffset(vcidx, ofs); // First get or VC Offset
 
 	// Debug string for finding Camera and VC mesh Position
-	//sprintf(oapiDebugString(), "%.3f  %.3f  %.3f ** %.3f  %.3f  %.3f ", camPos.x, camPos.y, camPos.z, ofs.x, ofs.y, ofs.z );
+	// sprintf(oapiDebugString(), "%.3f  %.3f  %.3f ** %.3f  %.3f  %.3f ", camPos.x-ofs.x, camPos.y-ofs.y, camPos.z-ofs.z, ofs.x, ofs.y, ofs.z );
 
 	// Set the Floodlights 
 	floodLight_P5->SetPosition(ofs + floodLightPos_P5);
