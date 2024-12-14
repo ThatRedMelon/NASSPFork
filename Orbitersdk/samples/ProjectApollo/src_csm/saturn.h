@@ -92,7 +92,6 @@ namespace mission
 #define RCS_CM_RING_1		4
 #define RCS_CM_RING_2		5
 
-
 ///
 /// \brief Cabin atmosphere status.
 /// \ingroup InternalInterface
@@ -1215,6 +1214,14 @@ public:
 	
 	void SetCMdocktgtMesh();
 
+	/// Set Altimeter Cover
+	void SetAltimeterCover();
+	void SetOrdealMesh();
+
+	/// Waste Disposal
+	void SetWasteDisposal();
+	void SetPanel382Cover();
+
 	///
 	/// \brief Set VC seats mesh
 	///
@@ -1284,6 +1291,7 @@ public:
 	mission::Mission *GetMission() { return pMission; }
 
 	void ClearMeshes();
+	void SetAnimations(double);
 
 	//
 	// Flashlight for VC
@@ -1299,6 +1307,43 @@ public:
 	VECTOR3 flashlightDirGlobal;
 	VECTOR3 flashlightDirLocal;
 	bool flashlightOn;
+
+	//
+	// FloodLight Panel 5
+	//
+	void UpdateFloodLights();
+	PointLight* floodLight_P5;
+	COLOUR4 floodLightColor_P5;
+	COLOUR4 floodLightColor2_P5;
+	VECTOR3 floodLightPos_P5;
+	VECTOR3 vesselPosGlobal_P5;
+	VECTOR3 floodLightDirGlobal_P5;
+	VECTOR3 floodLightDirLocal_P5;
+	bool floodLightOn_P5;
+
+	//
+	// FloodLight Panel 8
+	//
+	PointLight* floodLight_P8;
+	COLOUR4 floodLightColor_P8;
+	COLOUR4 floodLightColor2_P8;
+	VECTOR3 floodLightPos_P8;
+	VECTOR3 vesselPosGlobal_P8;
+	VECTOR3 floodLightDirGlobal_P8;
+	VECTOR3 floodLightDirLocal_P8;
+	bool floodLightOn_P8;
+
+	//
+	// FloodLight Panel 100(LEB)
+	//
+	PointLight* floodLight_P100;
+	COLOUR4 floodLightColor_P100;
+	COLOUR4 floodLightColor2_P100;
+	VECTOR3 floodLightPos_P100;
+	VECTOR3 vesselPosGlobal_P100;
+	VECTOR3 floodLightDirGlobal_P100;
+	VECTOR3 floodLightDirLocal_P100;
+	bool floodLightOn_P100;
 
 protected:
 
@@ -1567,6 +1612,43 @@ protected:
 	int hatchPanel600EnabledLeft;
 	int hatchPanel600EnabledRight;
 	int panel382Enabled;
+
+	int altimeterCovered;
+	int ordealStowed;
+
+/// BEGINN TEST by JORDAN
+
+/// Waste Disposal
+	int wasteDisposalStatus = true;
+	double wasteDisposalProc;
+	int meshidxWasteDisposal;
+	int meshidxWasteDisposalAll;
+	UINT wasteDisposalAnim;
+	AnimState wasteDisposalState;
+
+/// Panel 382 Cover
+	int panel382CoverStatus = true;
+	double panel382CoverProc;
+	int meshidxpanel382Cover;
+	UINT panel382CoverAnim;
+	AnimState panel382CoverState;
+
+/// Altimeter Cover
+	int altimeterCoverStatus;
+	double altimeterCoverProc;
+	int meshidxaltimeterCover;
+	UINT altimeterCoverAnim;
+	AnimState altimeterCoverState;
+
+/// Ordeal
+	int ordealStatus;
+	double ordealProc;
+	int meshidxOrdeal;
+	UINT ordealAnim;
+	AnimState ordealState;
+
+
+/// END TEST by JORDAN
 
 	///
 	/// \brief Right-hand FDAI.
@@ -4156,9 +4238,11 @@ protected:
 	// Integral Lights
 	//
 #ifdef _OPENORBITER
-	void SetCMVCIntegralLight(UINT meshidx, DWORD *matList, MatProp EmissionMode, double state, int cnt);
+	void SetVCLighting(UINT meshidx, DWORD *matList, MatProp EmissionMode, double state, int cnt);
+	void SetVCLighting(UINT meshidx, int material, MatProp EmissionMode, double state, int cnt);
 #else
-	void SetCMVCIntegralLight(UINT meshidx, DWORD *matList, int EmissionMode, double state, int cnt);
+	void SetVCLighting(UINT meshidx, DWORD *matList, int EmissionMode, double state, int cnt);
+	void SetVCLighting(UINT meshidx, int material, int EmissionMode, double state, int cnt);
 #endif
 
 	//
