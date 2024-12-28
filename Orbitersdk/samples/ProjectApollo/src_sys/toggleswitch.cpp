@@ -3816,15 +3816,11 @@ double MeterSwitch::GetDisplayValue() {
 	} else {
 		double dt = oapiGetSimTime() - lastDrawTime; // oapiGetSimTime() - lastDrawTime;
 		if (dt > 0.0) {
-			if (fabs(value - displayValue) / dt > (maxValue - minValue) / minMaxTime) {
-				// discrete time LPF where y[n] = y[n-1]*(1-a) + x[n]*a
-				// assumed that 5tau is minMaxTime, i.e. time to reach 99.3% of a step input.
-				// therefore 1/tau is (5/minMaxTime) for each slice {dt}.
-				double filtConstant = max(min(GAUGE_LPF_SCALAR * dt * 5.0/minMaxTime, 1.0),0.0);
-				displayValue = displayValue*(1.0-filtConstant) + (value*filtConstant);
-			} else {
-				displayValue = value;
-			}
+			// discrete time LPF where y[n] = y[n-1]*(1-a) + x[n]*a
+			// assumed that 5tau is minMaxTime, i.e. time to reach 99.3% of a step input.
+			// therefore 1/tau is (5/minMaxTime) for each slice {dt}.
+			double filtConstant = max(min(GAUGE_LPF_SCALAR * dt * 5.0 / minMaxTime, 1.0), 0.0);
+			displayValue = displayValue * (1.0 - filtConstant) + (value * filtConstant);
 		}
 	}
 	lastDrawTime = oapiGetSimTime(); // oapiGetSimTime();
