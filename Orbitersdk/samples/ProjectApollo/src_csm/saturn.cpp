@@ -716,6 +716,8 @@ void Saturn::initSaturn()
 	SLARotationLimit = 45;
 	SLAWillSeparate = true;
 
+	UseWideSLA = false;
+
 	hStage1Mesh = 0;
 	hStage2Mesh = 0;
 	hStage3Mesh = 0;
@@ -998,6 +1000,18 @@ void Saturn::initSaturn()
 	FovSave = 0;
 
 	//
+	// Flashlight
+	//
+	flashlight = 0;
+	flashlightColor = { 1,1,1,0 };
+	flashlightColor2 = { 0,0,0,0 };
+	flashlightPos = { 0,0,0 };
+	vesselPosGlobal = { 0,0,0 };
+	flashlightDirGlobal = { 0,0,1 };
+	flashlightDirLocal = { 0,0,1 };
+	flashlightOn = 0;
+
+	//
 	// Save the last view offset set.
 	//
 
@@ -1102,6 +1116,9 @@ void Saturn::initSaturn()
 	LMAscentFuelMassKg = 2345.0;
 	LMAscentEmptyMassKg = 2150.0;
 	LMDescentEmptyMassKg = 2224.0;
+
+	customPayloadMass = 0;
+	customPayloadClass[0] = 0;
 
 	UseATC = false;
 
@@ -1562,6 +1579,11 @@ void Saturn::clbkPreStep(double simt, double simdt, double mjd)
 		dsky.SendNetworkPacketDSKY();
 	}
 
+	if ((oapiGetFocusObject() == GetHandle()) && (oapiCockpitMode() == COCKPIT_VIRTUAL) && (oapiCameraMode() == CAM_COCKPIT)) {
+		//We have focus on this vessel, and are in the VC
+		MoveFlashlight();
+	}
+
 	sprintf(buffer, "End time(0) %lld", time(0)); 
 	TRACE(buffer);
 }
@@ -1755,6 +1777,11 @@ void Saturn::clbkSaveState(FILEHANDLE scn)
 	if (SIVBPayload != PAYLOAD_LEM) {
 		oapiWriteScenario_int (scn, "S4PL", SIVBPayload);
 	}
+	oapiWriteScenario_int(scn, "WIDESLA", UseWideSLA);
+	oapiWriteScenario_float(scn, "CUSTOMPAYLOADMASS", customPayloadMass);
+	if (customPayloadClass[0])
+		oapiWriteScenario_string(scn, "CUSTOMPAYLOADCLASS", customPayloadClass);
+
 	oapiWriteScenario_string (scn, "LANG", AudioLanguage);
 	
 	if (PayloadName[0])
@@ -2351,6 +2378,18 @@ bool Saturn::ProcessConfigFileLine(FILEHANDLE scn, char *line)
 	else if (!strnicmp(line, "S4PL", 4)) {
 		sscanf(line + 4, "%d", &SIVBPayload);
 	}
+	else if (!strnicmp(line, "WIDESLA", 7)) {
+		int i;
+		sscanf(line + 7, "%d", &i);
+		UseWideSLA = (i != 0);
+	}
+	else if (!strnicmp(line, "CUSTOMPAYLOADMASS", 17)) {
+		sscanf(line + 17, "%f", &ftcp);
+		customPayloadMass = ftcp;
+	}
+	else if (!strnicmp(line, "CUSTOMPAYLOADCLASS", 18)) {
+		strncpy(customPayloadClass, line + 19, 256);
+	}
 	else if (!strnicmp(line, "SMFUELLOAD", 10)) {
 		sscanf(line + 10, "%f", &ftcp);
 		SM_FuelMass = ftcp;
@@ -2883,6 +2922,10 @@ void Saturn::UpdatePayloadMass()
 
 	case PAYLOAD_DOCKING_ADAPTER:
 		S4PL_Mass = 4700.0; // see http://www.ibiblio.org/mscorbit/mscforum/index.php?topic=2064.0
+		break;
+
+	case PAYLOAD_CUSTOM:
+		S4PL_Mass = customPayloadMass;
 		break;
 
 	default:
@@ -3658,6 +3701,10 @@ int Saturn::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
 				agc.SetInputChannelBit(016,MarkReject,0);
 				return 1;
 		}
+	}
+
+	if ((down) && (key == OAPI_KEY_F)) {
+		ToggleFlashlight();
 	}
 
 	// MCC CAPCOM interface key handling                                                                                                
