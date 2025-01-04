@@ -2173,7 +2173,7 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 		entopt.RV_MCC = sv;
 		entopt.TIGguess = MCCtime;
 		entopt.vessel = calcParams.src;
-		entopt.type = 3;
+		entopt.type = 3; //Unspecified area
 
 		//Calculate corridor control burn
 		EntryTargeting(&entopt, &res);
@@ -2205,6 +2205,8 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		if (fcn == 94)
 		{
+			//MCC-7 update, calculate entry REFSMMAT
+
 			REFSMMATOpt refsopt;
 			refsopt.REFSMMATopt = 3;
 			refsopt.vessel = calcParams.src;
@@ -2246,30 +2248,25 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 			form->GET05G = res.GET05G;
 		}
 
+		//Uplink data
 		if (scrubbed)
 		{
+			sprintf(upMessage, "%s has been scrubbed", manname);
+
 			//Scrubbed MCC-5 and MCC-6
 			if (fcn == 90 || fcn == 91 || fcn == 92)
 			{
 				char buffer1[1000];
-				char buffer2[1000];
 
-				sprintf(upMessage, "%s has been scrubbed", manname);
-				sprintf(upDesc, "CSM state vector and V66, entry target");
+				sprintf(upDesc, "CSM state vector and V66");
 
 				AGCStateVectorUpdate(buffer1, sv, true, true);
-				CMCEntryUpdate(buffer2, res.latitude, res.longitude);
 
-				sprintf(uplinkdata, "%s%s", buffer1, buffer2);
+				sprintf(uplinkdata, "%s", buffer1);
 				if (upString != NULL) {
 					// give to mcc
 					strncpy(upString, uplinkdata, 1024 * 3);
 				}
-			}
-			//MCC-7 decision
-			else if (fcn == 93)
-			{
-				sprintf(upMessage, "%s has been scrubbed", manname);
 			}
 			//Scrubbed MCC-7
 			else if (fcn == 94)
@@ -2278,7 +2275,6 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 				char buffer2[1000];
 				char buffer3[1000];
 
-				sprintf(upMessage, "%s has been scrubbed", manname);
 				sprintf(upDesc, "CSM state vector and V66, entry target, Entry REFSMMAT");
 
 				AGCStateVectorUpdate(buffer1, sv, true, true);
@@ -2295,7 +2291,7 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 		else
 		{
 			//MCC-5 and MCC-6
-			if (fcn == 90 || fcn == 91 || fcn == 92)
+			if (fcn == 90 || fcn == 92)
 			{
 				char buffer1[1000];
 				char buffer2[1000];
@@ -2308,6 +2304,20 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 					// give to mcc
 					strncpy(upString, uplinkdata, 1024 * 3);
 					sprintf(upDesc, "CSM state vector and V66, target load");
+				}
+			}
+			//MCC-6 (preliminary)
+			else if (fcn == 91)
+			{
+				char buffer1[1000];
+
+				AGCStateVectorUpdate(buffer1, sv, true, true);
+
+				sprintf(uplinkdata, "%s", buffer1);
+				if (upString != NULL) {
+					// give to mcc
+					strncpy(upString, uplinkdata, 1024 * 3);
+					sprintf(upDesc, "CSM state vector and V66");
 				}
 			}
 			//MCC-7 decision
@@ -2392,29 +2402,41 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 		sprintf(form->Area[0], "MIDPAC");
 		if (entopt.direct == false)
 		{
-			if (fcn == 97)
+			//Maneuver is performed
+			if (fcn == 96 || fcn == 97)
 			{
+				//MCC-6
 				sprintf(form->remarks[0], "Assumes MCC6");
 			}
 			else if (fcn == 98)
 			{
+				//MCC-7
+				sprintf(form->remarks[0], "Assumes MCC7");
+			}
+		}
+		else
+		{
+			//Maneuver scrubbed or final PAD
+			if (fcn == 96 || fcn == 97)
+			{
+				//MCC-6
+				//TBD: Calculate MCC-7
 				sprintf(form->remarks[0], "Assumes MCC7");
 			}
 		}
 
 		if (fcn == 99)
 		{
+			//FINAL LUNAR ENTRY PAD
 			char buffer1[1000];
-			char buffer2[1000];
 
 			AGCStateVectorUpdate(buffer1, sv, true, true);
-			CMCEntryUpdate(buffer2, SplashLatitude, SplashLongitude);
 
-			sprintf(uplinkdata, "%s%s", buffer1, buffer2);
+			sprintf(uplinkdata, "%s", buffer1);
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "State vector and V66, entry update");
+				sprintf(upDesc, "State vector and V66");
 			}
 		}
 	}
@@ -2488,6 +2510,132 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 			strncpy(upString, uplinkdata, 1024 * 3);
 			sprintf(upDesc, "CSM state vector and V66");
 		}
+	}
+	break;
+	case 200: //LLS2 Photo PAD
+	case 202: //LLS3 Photo PAD
+	{
+		GENERICPAD * form = (GENERICPAD *)pad;
+		char buffer1[1000], buffer2[1000], buffer3[1000];
+
+		//Calculate T2 as time of closest approach
+		//T1 is 2 minutes earlier
+		//T0 might be at a specific longitude, but for now it's at a fixed time prior to T2 as well
+
+		EphemerisDataTable2 ephem;
+		EphemerisData sv0;
+		double get_guess, gmt_guess, T0, T1, T2, lng;
+
+		if (fcn == 200)
+		{
+			//LLS2
+			get_guess = OrbMech::HHMMSSToSS(118, 0, 0);
+			lng = 23.65*RAD;
+		}
+		else
+		{
+			//LLS3
+			get_guess = OrbMech::HHMMSSToSS(132, 0, 0);
+			lng = -1.35*RAD;
+		}
+		gmt_guess = GMTfromGET(get_guess);
+		
+		sv0 = StateVectorCalcEphem(calcParams.src);
+		mcc->mcc_calcs.CreateEphemeris(sv0, gmt_guess, gmt_guess + 4.0*3600.0, ephem);
+
+		mcc->mcc_calcs.LongitudeCrossing(ephem, lng, gmt_guess, T2);
+
+		T2 = GETfromGMT(T2);
+		T1 = T2 - 120.0;
+		T0 = T1 - (4.0*60.0 + 23.0);
+
+		OrbMech::format_time_HHMMSS(buffer1, T0);
+		OrbMech::format_time_HHMMSS(buffer2, T1);
+		OrbMech::format_time_HHMMSS(buffer3, T2);
+
+		sprintf(form->paddata, "OBLIQUE STRIP LLS 2  T0 %s  T1 %s  T2 %s", buffer1, buffer2, buffer3);
+	}
+	break;
+	case 201: //Strip Photo Update (rev 22)
+	{
+		GENERICPAD * form = (GENERICPAD *)pad;
+
+		EphemerisDataTable2 ephem;
+		EphemerisData sv0;
+		double gmt_guess, T0, T1, T2, T3;
+		char buffer1[1000], buffer2[1000], buffer3[1000], buffer4[1000];
+
+		gmt_guess = GMTfromGET(OrbMech::HHMMSSToSS(119, 0, 0));
+
+		sv0 = StateVectorCalcEphem(calcParams.src);
+		mcc->mcc_calcs.CreateEphemeris(sv0, gmt_guess, gmt_guess + 4.0*3600.0, ephem);
+
+		//T0: Camera start, at terminator rise
+		T0 = mcc->mcc_calcs.TerminatorRise(ephem, gmt_guess);
+
+		//T1: Sub-solar point (TBD)
+		T1 = T0 + 28.0*60.0;
+
+		//T2: 65°E crossing
+		mcc->mcc_calcs.LongitudeCrossing(ephem, 65.0*RAD, T1, T2);
+		
+		//T3: 34°E crossing
+		mcc->mcc_calcs.LongitudeCrossing(ephem, 34.0*RAD, T2, T3);
+
+		//Convert to GET
+		T0 = GETfromGMT(T0);
+		T1 = GETfromGMT(T1);
+		T2 = GETfromGMT(T2);
+		T3 = GETfromGMT(T3);
+
+		OrbMech::format_time_HHMMSS(buffer1, T0);
+		OrbMech::format_time_HHMMSS(buffer2, T1);
+		OrbMech::format_time_HHMMSS(buffer3, T2);
+		OrbMech::format_time_HHMMSS(buffer4, T3);
+
+		sprintf(form->paddata, "VERTICAL STERO  T0 %s Camera start  T1 %s (Sub-solar pt)  T2 %s (65°E)  T3 %s (34°E)", buffer1, buffer2, buffer3, buffer4);
+	}
+	break;
+	case 203: //Strip Photo Update (rev 31)
+	{
+		GENERICPAD * form = (GENERICPAD *)pad;
+
+		EphemerisDataTable2 ephem;
+		EphemerisData sv0;
+		double gmt_guess, T0, T1, T2;
+		char buffer1[1000], buffer2[1000], buffer3[1000];
+
+		gmt_guess = GMTfromGET(OrbMech::HHMMSSToSS(135, 0, 0));
+
+		sv0 = StateVectorCalcEphem(calcParams.src);
+		mcc->mcc_calcs.CreateEphemeris(sv0, gmt_guess, gmt_guess + 4.0*3600.0, ephem);
+
+		//T0: 90°E crossing
+		mcc->mcc_calcs.LongitudeCrossing(ephem, 90.0*RAD, gmt_guess, T0);
+
+		//T1: 85°E crossing
+		mcc->mcc_calcs.LongitudeCrossing(ephem, 85.0*RAD, T0, T1);
+
+		//T2: 30°E crossing
+		mcc->mcc_calcs.LongitudeCrossing(ephem, 30.0*RAD, T1, T2);
+
+		//Convert to GET
+		T0 = GETfromGMT(T0);
+		T1 = GETfromGMT(T1);
+		T2 = GETfromGMT(T2);
+
+		OrbMech::format_time_HHMMSS(buffer1, T0);
+		OrbMech::format_time_HHMMSS(buffer2, T1);
+		OrbMech::format_time_HHMMSS(buffer3, T2);
+
+		sprintf(form->paddata, "DESCENT STRIP AND LLS3  T0 %s  T1 %s (85°E)  T2 %s (30°E)", buffer1, buffer2, buffer3);
+	}
+	break;
+	case 204: //TV UPDATE
+	{
+		GENERICPAD * form = (GENERICPAD *)pad;
+
+		sprintf(form->paddata, "TV UPDATE  R 180 HGA  P 293 P -58  Y 000 Y 005");
 	}
 	break;
 	}

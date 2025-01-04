@@ -66,7 +66,7 @@ using namespace nassp;
 #define LOAD_STRING(KEY,VALUE,LEN) if(strnicmp(line,KEY,strlen(KEY))==0){ strncpy(VALUE, line + (strlen(KEY)+1), LEN); }
 
 // CONS
-MCC::MCC(RTCC *rtc)
+MCC::MCC(RTCC *rtc) : mcc_calcs(rtc)
 {	
 	// Reset data
 	CSMName[0] = 0;
