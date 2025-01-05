@@ -2406,12 +2406,12 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 			if (fcn == 96 || fcn == 97)
 			{
 				//MCC-6
-				sprintf(form->remarks[0], "Assumes MCC6");
+				sprintf(form->remarks[0], "Assumes MCC-6");
 			}
 			else if (fcn == 98)
 			{
 				//MCC-7
-				sprintf(form->remarks[0], "Assumes MCC7");
+				sprintf(form->remarks[0], "Assumes MCC-7");
 			}
 		}
 		else
@@ -2421,7 +2421,7 @@ bool RTCC::CalculationMTP_F(int fcn, LPVOID &pad, char * upString, char * upDesc
 			{
 				//MCC-6
 				//TBD: Calculate MCC-7
-				sprintf(form->remarks[0], "Assumes MCC7");
+				sprintf(form->remarks[0], "Assumes MCC-7");
 			}
 		}
 
