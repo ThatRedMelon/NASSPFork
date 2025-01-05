@@ -1770,9 +1770,7 @@ protected:
 	// EVA Antenna Handle
 	//
 
-	int EVAAntHandleStatus = false;
-	double EVAAntHandleProc;
-	int meshidxEVAAntHandle;
+	int EVAAntHandleStatus;
 	UINT EVAAntHandleAnim;
 	AnimState EVAAntHandleState;
 

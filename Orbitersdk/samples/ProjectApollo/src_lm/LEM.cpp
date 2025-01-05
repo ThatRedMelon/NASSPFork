@@ -533,6 +533,7 @@ void LEM::Init()
 	status = 0;
 	CDRinPLSS = 0;
 	LMPinPLSS = 0;
+	EVAAntHandleStatus = false;
 
 	CMPowerToCDRBusRelayA = false;
 	CMPowerToCDRBusRelayB = false;
