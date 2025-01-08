@@ -1397,6 +1397,90 @@ RTCC::RTEConstraintsTable::RTEConstraintsTable()
 	sprintf_s(RTEManeuverCode, "CSU");
 }
 
+RTCC::RetrofireMEDSaveTable::RetrofireMEDSaveTable()
+{
+	R30_ColumnIndicator = 7;
+	R30_GETI_SH = 0.0;
+	R30_DeltaT_Sep = 20.0*60.0;
+	R30_Thruster = RTCC_ENGINETYPE_CSMRCSPLUS4;
+	R30_DeltaV = 5.0*0.3048;
+	R30_DeltaT = 0.0;
+	R30_Att = _V(0.0, -45.4*RAD, 180.0*RAD);
+	R30_Ullage_DT = 15.0;
+	R30_Use4UllageThrusters = true;
+	R30_GimbalIndicator = -1;
+
+	R31_Thruster = RTCC_ENGINETYPE_CSMSPS;
+	R31_GuidanceMode = 4;
+	R31_BurnMode = 3;
+	R31_dt = 0.0;
+	R31_dv = 0.0;
+	R31_AttitudeMode = 2;
+	R31_LVLHAttitude = _V(0.0, -48.5*RAD, PI);
+	R31_UllageTime = 15.0;
+	R31_Use4UllageThrusters = true;
+	R31_REFSMMAT = 1;
+	R31_GimbalIndicator = -1;
+	R31_InitialBankAngle = 0.0;
+	R31_GLevel = 0.2;
+	R31_FinalBankAngle = 55.0*RAD;
+
+	R32_Code = 1;
+	R32_GETI = 0.0;
+	R32_lat_T = 0.0;
+	R32_lng_T = 0.0;
+	R32_MD = 1.0;
+}
+
+void RTCC::RetrofireMEDSaveTable::SaveState(FILEHANDLE scn, char *start_str, char *end_str)
+{
+	char buffer[256];
+
+	oapiWriteLine(scn, start_str);
+
+	sprintf(buffer, "%d %lf %lf %d %lf %lf %lf %lf %lf %lf %d %d", R30_ColumnIndicator, R30_GETI_SH, R30_DeltaT_Sep, R30_Thruster, R30_DeltaV, R30_DeltaT,
+		R30_Att.x, R30_Att.y, R30_Att.z, R30_Ullage_DT, R30_Use4UllageThrusters, R30_GimbalIndicator);
+	oapiWriteScenario_string(scn, "R30", buffer);
+
+	sprintf(buffer, "%d %d %d %.2lf %.2lf %d %lf %lf %lf %lf %d %d %lf %.2lf %lf", R31_Thruster, R31_GuidanceMode, R31_BurnMode, R31_dt, R31_dv, R31_AttitudeMode,
+		R31_LVLHAttitude.x, R31_LVLHAttitude.y, R31_LVLHAttitude.z, R31_UllageTime, R31_Use4UllageThrusters, R31_REFSMMAT, R31_InitialBankAngle, R31_GLevel, R31_FinalBankAngle);
+	oapiWriteScenario_string(scn, "R31", buffer);
+
+	sprintf(buffer, "%d %lf %lf %lf %lf", R32_Code, R32_GETI, R32_lat_T, R32_lng_T, R32_MD);
+	oapiWriteScenario_string(scn, "R32", buffer);
+
+	oapiWriteLine(scn, end_str);
+}
+
+void RTCC::RetrofireMEDSaveTable::LoadState(FILEHANDLE scn, char *end_str)
+{
+	char *line;
+	int i1 = 0;
+
+	while (oapiReadScenario_nextline(scn, line)) {
+		if (!strnicmp(line, end_str, sizeof(end_str))) {
+			break;
+		}
+
+		if (strnicmp(line, "R30", 3) == 0)
+		{
+			sscanf(line + 3, "%d %lf %lf %d %lf %lf %lf %lf %lf %lf %d %d", &R30_ColumnIndicator, &R30_GETI_SH, &R30_DeltaT_Sep, &R30_Thruster, &R30_DeltaV, &R30_DeltaT,
+				&R30_Att.x, &R30_Att.y, &R30_Att.z, &R30_Ullage_DT, &i1, &R30_GimbalIndicator);
+			R30_Use4UllageThrusters = (i1 != 0);
+		}
+		else if (strnicmp(line, "R31", 3) == 0)
+		{
+			sscanf(line + 3, "%d %d %d %lf %lf %d %lf %lf %lf %lf %d %d %lf %lf %lf", &R31_Thruster, &R31_GuidanceMode, &R31_BurnMode, &R31_dt, &R31_dv, &R31_AttitudeMode,
+				&R31_LVLHAttitude.x, &R31_LVLHAttitude.y, &R31_LVLHAttitude.z, &R31_UllageTime, &i1, &R31_REFSMMAT, &R31_InitialBankAngle, &R31_GLevel, &R31_FinalBankAngle);
+			R31_Use4UllageThrusters = (i1 != 0);
+		}
+		else if (strnicmp(line, "R32", 3) == 0)
+		{
+			sscanf(line + 3, "%d %lf %lf %lf %lf", &R32_Code, &R32_GETI, &R32_lat_T, &R32_lng_T, &R32_MD);
+		}
+	}
+}
+
 RTCC::RendezvousEvaluationDisplay::RendezvousEvaluationDisplay()
 {
 	ID = 0;
@@ -7673,6 +7757,7 @@ void RTCC::SaveState(FILEHANDLE scn) {
 	PZMPTLEM.SaveState(scn, "MPTLEM_BEGIN", "MPTLEM_END");
 	RZDBSC1.SaveState(scn, "RZDBSC1_BEGIN", "RZDBSC1_END");
 	PZMARM.SaveState(scn, "PZMARM_BEGIN", "PZMARM_END");
+	RZJCTTC.SaveState(scn, "RZJCTTC_BEGIN", "RZJCTTC_END");
 
 	if (pCSM)
 	{
@@ -7936,6 +8021,9 @@ void RTCC::LoadState(FILEHANDLE scn) {
 		}
 		else if (!strnicmp(line, "PZMARM_BEGIN", sizeof("PZMARM_BEGIN"))) {
 			PZMARM.LoadState(scn, "PZMARM_END");
+		}
+		else if (!strnicmp(line, "RZJCTTC_BEGIN", sizeof("RZJCTTC_BEGIN"))) {
+			RZJCTTC.LoadState(scn, "RZJCTTC_END");
 		}
 		papiReadScenario_string(line, "RTCCMFD_CSM", CSMName);
 		papiReadScenario_string(line, "RTCCMFD_LM", LEMName);
