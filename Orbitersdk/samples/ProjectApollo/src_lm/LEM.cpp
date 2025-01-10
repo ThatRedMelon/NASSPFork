@@ -676,6 +676,11 @@ void LEM::Init()
 	RegisterConnector(VIRTUAL_CONNECTOR_PORT, &lm_rr_to_csm_connector);
 	RegisterConnector(VIRTUAL_CONNECTOR_PORT, &lm_vhf_to_csm_csm_connector);
 
+	// New keyboard control values
+	for (auto i = 0; i < 6; ++i) {
+		aca_keyboard_deflection[i] = 0.0;
+	}
+
 	// Do this stuff only once
 	if(!InitLEMCalled){
 		SystemsInit();

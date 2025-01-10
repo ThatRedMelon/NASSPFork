@@ -1199,6 +1199,11 @@ void Saturn::initSaturn()
 	LastFuelWeight = numeric_limits<double>::infinity(); // Ensure update at first opportunity
 	currentCoG = _V(0, 0, 0);
 
+	// New keyboard control values
+	for (auto i = 0; i < 6; ++i) {
+		rhc_keyboard_deflection[i] = 0.0;
+	}
+
 	// call only once 
 	if (!InitSaturnCalled) {
 
