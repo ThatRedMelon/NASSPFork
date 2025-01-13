@@ -62,23 +62,7 @@ void RHC::Timestep(int* rhc_pos, bool normdc, bool normac, bool dirdcab, bool di
 	//Proportional Rate
 	if (normac)
 	{
-		// Proportional rate scales from 0° to 10° deflection.
-		// The command only activates once we pass the breakout switches at 1.5°,
-		// but this isn't an issue because we also need to overcome the SCS
-		// rate deadband value before any thruster activity will be commanded by the system.
-		for (int i = 0; i < 3; i++)
-		{
-			if (deflection.data[i] >= 0.0)
-			{
-				PropRate.data[i] = min(1.0, max(0.0, (deflection.data[i]) / 10.0));
-			}
-			else
-			{
-				PropRate.data[i] = min(0.0, max(-1.0, (deflection.data[i]) / 10.0));
-			}
-		}
-
-		//sprintf(oapiDebugString(), "Proportional Rate: X/Y/Z = %f / %f / %f | %f° / %f° / %f°", PropRate.x, PropRate.y, PropRate.z, deflection.x, deflection.y, deflection.z);
+		PropRate = deflection / 11.5;
 	}
 	else
 	{
