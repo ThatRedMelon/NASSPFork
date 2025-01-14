@@ -123,7 +123,7 @@ void Flag::clbkPreStep(double SimT, double SimDT, double mjd)
 		}
 	}
 
-	if ((doFlagFall == 1) & (flagFallProc < 1)) {
+	if ((doFlagFall == 1) && (flagFallProc < 1)) {
 		MoveFlagFallAnimation(SimDT);
 	}
 }
@@ -177,12 +177,12 @@ OBJHANDLE Flag::FindLM()
 	vessCount = oapiGetVesselCount();
 	for (int i = 0; i < vessCount; i++)
 	{
-		if ((oapiGetMass(oapiGetVesselByIndex(i)) > 1000) & (oapiGetMaxFuelMass(oapiGetVesselByIndex(i)) != 0.2)) { //Avoid detecting the descent stage
+		if ((oapiGetMass(oapiGetVesselByIndex(i)) > 1000) && (oapiGetMaxFuelMass(oapiGetVesselByIndex(i)) != 0.2)) { //Avoid detecting the descent stage
 			VECTOR3 vecDistance = _V(0, 0, 0);
 			double distance = 0;
 			GetRelativePos(oapiGetVesselByIndex(i), vecDistance);
 			distance = length(vecDistance);
-			if ((distance < minDistance) & (distance < 250)) {
+			if ((distance < minDistance) && (distance < 250)) {
 				minDistance = distance;
 				lmHandle = oapiGetVesselByIndex(i);
 			}
