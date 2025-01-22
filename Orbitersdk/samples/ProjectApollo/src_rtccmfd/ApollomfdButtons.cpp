@@ -102,7 +102,7 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("", OAPI_KEY_O, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_D, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_K, &ApolloRTCCMFD::menuVoid);
-	RegisterFunction("ENG", OAPI_KEY_L, &ApolloRTCCMFD::menuSetTITransferPage);
+	RegisterFunction("TRA", OAPI_KEY_L, &ApolloRTCCMFD::menuSetTITransferPage);
 	RegisterFunction("BCK", OAPI_KEY_F, &ApolloRTCCMFD::menuSetLambertPage);
 
 
@@ -136,7 +136,7 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("", OAPI_KEY_O, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("CLC", OAPI_KEY_C, &ApolloRTCCMFD::SPQcalc);
 	RegisterFunction("DIS", OAPI_KEY_D, &ApolloRTCCMFD::menuSetRendezvousEvaluationDisplayPage);
-	RegisterFunction("ENG", OAPI_KEY_L, &ApolloRTCCMFD::menuSetSPQorDKIRTransferPage);
+	RegisterFunction("TRA", OAPI_KEY_L, &ApolloRTCCMFD::menuSetSPQorDKIRTransferPage);
 	RegisterFunction("BCK", OAPI_KEY_B, &ApolloRTCCMFD::menuSetRendezvousPage);
 
 
@@ -170,7 +170,7 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("VES", OAPI_KEY_E, &ApolloRTCCMFD::menuGPMCycleVessel);
 	RegisterFunction("", OAPI_KEY_F, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_G, &ApolloRTCCMFD::menuVoid);
-	RegisterFunction("ENG", OAPI_KEY_T, &ApolloRTCCMFD::menuSetGPMTransferPage);
+	RegisterFunction("TRA", OAPI_KEY_T, &ApolloRTCCMFD::menuSetGPMTransferPage);
 	RegisterFunction("BCK", OAPI_KEY_B, &ApolloRTCCMFD::menuSetTargetingMenu);
 
 
@@ -1948,8 +1948,8 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 		{ "Replace code", 0, 'R' },
 		{ "Select thruster", 0, 'T' },
 		{ "Attitude mode", 0, 'A' },
-		{ "Ullage DT", 0, 'U' },
-		{ "Ullage thrusters", 0, 'W' },
+		{ "Ullage options", 0, 'U' },
+		{ "", 0, ' ' },
 
 		{ "Iteration flag", 0, 'I' },
 		{ "DPS 10% time", 0, 'P' },
@@ -1965,8 +1965,8 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("REP", OAPI_KEY_R, &ApolloRTCCMFD::menuGPMReplaceCode);
 	RegisterFunction("THR", OAPI_KEY_T, &ApolloRTCCMFD::menuChooseGPMThruster);
 	RegisterFunction("ATT", OAPI_KEY_A, &ApolloRTCCMFD::menuCycleGPMAttitude);
-	RegisterFunction("UDT", OAPI_KEY_U, &ApolloRTCCMFD::menuGPMUllageDT);
-	RegisterFunction("UTH", OAPI_KEY_W, &ApolloRTCCMFD::menuGPMUllageThrusters);
+	RegisterFunction("ULL", OAPI_KEY_U, &ApolloRTCCMFD::menuGPMUllageOptions);
+	RegisterFunction("", OAPI_KEY_W, &ApolloRTCCMFD::menuVoid);
 	
 	RegisterFunction("ITE", OAPI_KEY_I, &ApolloRTCCMFD::menuCycleGPMIterationFlag);
 	RegisterFunction("DT", OAPI_KEY_P, &ApolloRTCCMFD::menuGPMDPSTenPercentDeltaT);
@@ -2074,7 +2074,7 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("TLA", OAPI_KEY_F, &ApolloRTCCMFD::menuLDPPSaveTLAND);
 	RegisterFunction("", OAPI_KEY_P, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_S, &ApolloRTCCMFD::menuVoid);
-	RegisterFunction("MPT", OAPI_KEY_U, &ApolloRTCCMFD::menuSetSPQorDKIRTransferPage);
+	RegisterFunction("TRA", OAPI_KEY_U, &ApolloRTCCMFD::menuSetSPQorDKIRTransferPage);
 	RegisterFunction("BCK", OAPI_KEY_B, &ApolloRTCCMFD::menuSetDescPlanCalcPage);
 
 
@@ -2686,7 +2686,7 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("", OAPI_KEY_G, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_P, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_S, &ApolloRTCCMFD::menuVoid);
-	RegisterFunction("ENG", OAPI_KEY_E, &ApolloRTCCMFD::menuMCCTransferPage);
+	RegisterFunction("TRA", OAPI_KEY_E, &ApolloRTCCMFD::menuMCCTransferPage);
 	RegisterFunction("BCK", OAPI_KEY_B, &ApolloRTCCMFD::menuMidcoursePage);
 
 
@@ -2856,7 +2856,7 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("", OAPI_KEY_S, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_P, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_D, &ApolloRTCCMFD::menuVoid);
-	RegisterFunction("ENG", OAPI_KEY_E, &ApolloRTCCMFD::menuLOITransferPage);
+	RegisterFunction("TRA", OAPI_KEY_E, &ApolloRTCCMFD::menuLOITransferPage);
 	RegisterFunction("BCK", OAPI_KEY_B, &ApolloRTCCMFD::menuSetLOIPage);
 
 
@@ -3989,9 +3989,9 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 		{ "DT of sep/shaping", 0, 'C' },
 		{ "LVLH attitude", 0, 'A' },
 
-		{ "Ullage DT", 0, 'U' },
-		{ "Ullage thrusters", 0, 'L' },
+		{ "Ullage options", 0, 'U' },
 		{ "SPS gimbal angles", 0, 'G' },
+		{ "", 0, ' ' },
 		{ "", 0, ' ' },
 		{ "", 0, ' ' },
 		{ "Back to menu", 0, 'B' },
@@ -4006,9 +4006,9 @@ ApolloRTCCMFDButtons::ApolloRTCCMFDButtons()
 	RegisterFunction("DT", OAPI_KEY_C, &ApolloRTCCMFD::menuRetroSepDeltaT);
 	RegisterFunction("ATT", OAPI_KEY_A, &ApolloRTCCMFD::menuRetroSepAtt);
 
-	RegisterFunction("UDT", OAPI_KEY_U, &ApolloRTCCMFD::menuRetroSepUllageDT);
-	RegisterFunction("UTH", OAPI_KEY_L, &ApolloRTCCMFD::menuRetroSepUllageThrusters);
+	RegisterFunction("UDT", OAPI_KEY_U, &ApolloRTCCMFD::menuRetroSepUllageOptions);
 	RegisterFunction("GBL", OAPI_KEY_G, &ApolloRTCCMFD::menuRetroSepGimbalIndicator);
+	RegisterFunction("", OAPI_KEY_L, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_E, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("", OAPI_KEY_D, &ApolloRTCCMFD::menuVoid);
 	RegisterFunction("BCK", OAPI_KEY_B, &ApolloRTCCMFD::menuSetRetrofireSubsystemPage);

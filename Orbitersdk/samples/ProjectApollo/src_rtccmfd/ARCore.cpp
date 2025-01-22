@@ -1064,14 +1064,9 @@ void ARCore::TransferTIToMPT()
 	startSubthread(38);
 }
 
-void ARCore::TransferSPQToMPT()
+void ARCore::Transfer_SPQ_Or_DKI_To_MPT()
 {
 	startSubthread(39);
-}
-
-void ARCore::TransferDKIToMPT()
-{
-	startSubthread(40);
 }
 
 void ARCore::MPTDirectInputCalc()
@@ -4687,53 +4682,7 @@ int ARCore::subThread()
 		Result = DONE;
 	}
 	break;
-	case 39: //Transfer SPQ to MPT
-	{
-		if (GC->MissionPlanningActive)
-		{
-			std::vector<std::string> str;
-			GC->rtcc->PMMMED("70", str);
-		}
-		else
-		{
-			SV sv_pre, sv_post, sv_tig;
-			double attachedMass = 0.0;
-
-			//Was CSM or LM the chaser vehicle?
-			VESSEL *v;
-			if (GC->rtcc->PZDKIT.Block[0].Display[0].VEH == RTCC_MPT_CSM)
-			{
-				v = GC->rtcc->pCSM;
-			}
-			else
-			{
-				v = GC->rtcc->pLM;
-			}
-
-			if (v == NULL)
-			{
-				Result = DONE;
-				break;
-			}
-
-			SV sv_now = GC->rtcc->StateVectorCalc(v);
-			sv_tig = GC->rtcc->coast(sv_now, SPQTIG - OrbMech::GETfromMJD(sv_now.MJD, GC->rtcc->CalcGETBase()));
-
-			if (vesselisdocked)
-			{
-				attachedMass = GC->rtcc->GetDockedVesselMass(v);
-			}
-			else
-			{
-				attachedMass = 0.0;
-			}
-			GC->rtcc->PoweredFlightProcessor(sv_tig, SPQTIG, GC->rtcc->med_m70.Thruster, 0.0, SPQDeltaV, true, P30TIG, dV_LVLH, sv_pre, sv_post);
-		}
-
-		Result = DONE;
-	}
-	break;
-	case 40: //Transfer DKI to MPT
+	case 39: //Transfer SPQ or DKI to MPT
 	{
 		if (GC->MissionPlanningActive)
 		{
@@ -4786,6 +4735,11 @@ int ARCore::subThread()
 		}
 
 		Result = DONE;
+	}
+	break;
+	case 40: //Spare
+	{
+
 	}
 	break;
 	case 41: //Direct Input to the MPT

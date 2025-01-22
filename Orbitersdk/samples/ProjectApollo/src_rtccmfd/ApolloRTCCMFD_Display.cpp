@@ -922,14 +922,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				skp->Text(1 * W / 16, 4 * H / 14, "Heads Down", 10);
 			}
 
-			if (G->manpad_ullage_opt)
-			{
-				sprintf_s(Buffer, "4 quads, %.1f s", G->manpad_ullage_dt);
-			}
-			else
-			{
-				sprintf_s(Buffer, "2 quads, %.1f s", G->manpad_ullage_dt);
-			}
+			PrintUllage(Buffer, G->manpadenginetype, G->manpad_ullage_opt, G->manpad_ullage_dt);
 			skp->Text(1 * W / 16, 5 * H / 14, Buffer, strlen(Buffer));
 
 			GET_Display2(Buffer, G->P30TIG);
@@ -4672,21 +4665,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		ThrusterName(Buffer, GC->rtcc->med_m72.Thruster);
 		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
 
-		if (GC->rtcc->med_m72.UllageDT < 0)
-		{
-			sprintf_s(Buffer, "Nominal ullage");
-		}
-		else
-		{
-			if (GC->rtcc->med_m72.UllageQuads)
-			{
-				sprintf_s(Buffer, "4 quads, %.1f s", GC->rtcc->med_m72.UllageDT);
-			}
-			else
-			{
-				sprintf_s(Buffer, "2 quads, %.1f s", GC->rtcc->med_m72.UllageDT);
-			}
-		}
+		PrintUllage(Buffer, GC->rtcc->med_m72.Thruster, GC->rtcc->med_m72.UllageQuads, GC->rtcc->med_m72.UllageDT);
 		skp->Text(1 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
 
 		if (GC->rtcc->med_m72.Thruster == RTCC_ENGINETYPE_LMDPS)
@@ -4788,21 +4767,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
 		}
 
-		if (GC->rtcc->med_m70.UllageDT < 0)
-		{
-			sprintf_s(Buffer, "Nominal ullage");
-		}
-		else
-		{
-			if (GC->rtcc->med_m70.UllageQuads)
-			{
-				sprintf_s(Buffer, "4 quads, %.1f s", GC->rtcc->med_m70.UllageDT);
-			}
-			else
-			{
-				sprintf_s(Buffer, "2 quads, %.1f s", GC->rtcc->med_m70.UllageDT);
-			}
-		}
+		PrintUllage(Buffer, GC->rtcc->med_m70.Thruster, GC->rtcc->med_m70.UllageQuads, GC->rtcc->med_m70.UllageDT);
 		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
 
 		if (GC->rtcc->med_m70.Iteration)
@@ -5006,24 +4971,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		ThrusterName(Buffer, GC->rtcc->med_m65.Thruster);
 		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
 
-		if (GC->rtcc->med_m65.UllageDT < 0)
-		{
-			sprintf_s(Buffer, "Nominal ullage");
-		}
-		else
-		{
-			sprintf_s(Buffer, "%.1lf s", GC->rtcc->med_m65.UllageDT);
-		}
+		PrintUllage(Buffer, GC->rtcc->med_m65.Thruster, GC->rtcc->med_m65.UllageQuads, GC->rtcc->med_m65.UllageDT);
 		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
-
-		if (GC->rtcc->med_m65.UllageQuads)
-		{
-			skp->Text(1 * W / 16, 12 * H / 14, "4 Thrusters", 11);
-		}
-		else
-		{
-			skp->Text(1 * W / 16, 12 * H / 14, "2 Thrusters", 11);
-		}
 
 		if (GC->rtcc->med_m65.Iteration)
 		{
@@ -6817,21 +6766,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		ThrusterName(Buffer, GC->rtcc->med_m78.Thruster);
 		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
 
-		if (GC->rtcc->med_m78.UllageDT < 0)
-		{
-			sprintf_s(Buffer, "Nominal ullage");
-		}
-		else
-		{
-			if (GC->rtcc->med_m78.UllageQuads)
-			{
-				sprintf_s(Buffer, "4 quads, %.1f s", GC->rtcc->med_m78.UllageDT);
-			}
-			else
-			{
-				sprintf_s(Buffer, "2 quads, %.1f s", GC->rtcc->med_m78.UllageDT);
-			}
-		}
+		PrintUllage(Buffer, GC->rtcc->med_m78.Thruster, GC->rtcc->med_m78.UllageQuads, GC->rtcc->med_m78.UllageDT);
 		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 
 		if (GC->rtcc->med_m78.Iteration)
@@ -8003,7 +7938,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 	else if (screen == 90)
 	{
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
-		skp->Text(4 * W / 8, 2 * H / 32, "LUNAR RENDEZVOUS PLAN TABLE", 27);
+		skp->Text(4 * W / 8, 2 * H / 32, "LUNAR RENDEZVOUS PLAN TABLE (MSK 66)", 36);
 		skp->SetFont(font2);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
@@ -9087,19 +9022,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 8 * H / 14, "31.7° window line", 17);
 		}
 
-
-		if (GC->rtcc->RZJCTTC.R31_Thruster == RTCC_ENGINETYPE_CSMSPS)
-		{
-			if (GC->rtcc->RZJCTTC.R31_Use4UllageThrusters)
-			{
-				sprintf_s(Buffer, "4 quads, %.1lf s ullage", GC->rtcc->RZJCTTC.R31_UllageTime);
-			}
-			else
-			{
-				sprintf_s(Buffer, "2 quads, %.1lf s ullage", GC->rtcc->RZJCTTC.R31_UllageTime);
-			}
-			skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
-		}
+		PrintUllage(Buffer, GC->rtcc->RZJCTTC.R31_Thruster, GC->rtcc->RZJCTTC.R31_Use4UllageThrusters, GC->rtcc->RZJCTTC.R31_UllageTime);
+		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 
 		if (GC->rtcc->RZJCTTC.R31_REFSMMAT < 9)
 		{
@@ -9934,21 +9858,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		sprintf(Buffer, "%.2lf %.2lf %.2lf", GC->rtcc->RZJCTTC.R30_Att.x*DEG, GC->rtcc->RZJCTTC.R30_Att.y*DEG, GC->rtcc->RZJCTTC.R30_Att.z*DEG);
 		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 
+		PrintUllage(Buffer, GC->rtcc->RZJCTTC.R30_Thruster, GC->rtcc->RZJCTTC.R30_Use4UllageThrusters, GC->rtcc->RZJCTTC.R30_Ullage_DT);
+		skp->Text(9 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
+
 		if (GC->rtcc->RZJCTTC.R30_Thruster == RTCC_ENGINETYPE_CSMSPS)
 		{
-			sprintf(Buffer, "%.1lf s", GC->rtcc->RZJCTTC.R30_Ullage_DT);
-			skp->Text(9 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
-
-			if (GC->rtcc->RZJCTTC.R30_Use4UllageThrusters)
-			{
-				sprintf(Buffer, "4 jet ullage");
-			}
-			else
-			{
-				sprintf(Buffer, "2 jet ullage");
-			}
-			skp->Text(9 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-
 			if (GC->rtcc->RZJCTTC.R30_GimbalIndicator == 1)
 			{
 				sprintf(Buffer, "Use System Parameters");
@@ -9957,7 +9871,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				sprintf(Buffer, "Compute Gimbal Trims");
 			}
-			skp->Text(9 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+			skp->Text(9 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
 		}
 	}
 	else if (screen == 118)
@@ -10356,7 +10270,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 	else if (screen == 123)
 	{
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
-		skp->Text(4 * W / 8, 2 * H / 32, "RENDEZVOUS PLANNING TABLE", 27);
+		skp->Text(4 * W / 8, 2 * H / 32, "RENDEZVOUS PLANNING TABLE (MSK 57)", 34);
 		skp->SetFont(font2);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
@@ -11419,5 +11333,43 @@ void ApolloRTCCMFD::PrintTargetVessel(char *Buffer)
 	else
 	{
 		sprintf_s(Buffer, 127, "No Target!");
+	}
+}
+
+void ApolloRTCCMFD::PrintUllage(char *Buffer, int Thruster, bool Use4Jets, double Duration)
+{
+	if (Thruster == RTCC_ENGINETYPE_CSMSPS || Thruster == RTCC_ENGINETYPE_LMAPS || Thruster == RTCC_ENGINETYPE_LMDPS)
+	{
+		char Buff2[128];
+
+		if (Use4Jets)
+		{
+			sprintf_s(Buff2, "4 Jets");
+		}
+		else
+		{
+			sprintf_s(Buff2, "2 Jets");
+		}
+
+		if (Duration < 0.0)
+		{
+			sprintf_s(Buffer, 127, "%s, default duration", Buff2);
+		}
+		else if (Duration > 1.0)
+		{
+			sprintf_s(Buffer, 127, "%s, %.0lfs ullage", Buff2, Duration);
+		}
+		else if (Duration > 0.0)
+		{
+			sprintf_s(Buffer, 127, "Illegal ullage duration!");
+		}
+		else
+		{
+			sprintf_s(Buffer, 127, "No ullage");
+		}
+	}
+	else
+	{
+		sprintf_s(Buffer, 127, "");
 	}
 }

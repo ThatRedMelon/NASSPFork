@@ -196,11 +196,11 @@ struct MED_M68
 //Transfer a DKI, SPQ, or a Descent Plan to the MPT
 struct MED_M70
 {
-	int Plan = 0; //-1 = Descent Plan, 0 = SPQ, 1 = DKI
+	int Plan = 0; //-1 = Descent Plan, 0 = SPQ, 1-7 = DKI plans 1-7
 	double DeleteGET = 0.0;
 	int Thruster = RTCC_ENGINETYPE_CSMRCSPLUS2; //Thruster for the maneuver
 	int Attitude = 4;		//Attitude option (1 = Inertial, 2 = Manual, 3 = Lambert, 4 = PGNS External DV, 5 = AGS External DV)
-	double UllageDT = -1;	//Delta T of Ullage
+	double UllageDT = 0.0;	//Delta T of Ullage
 	bool UllageQuads = true;//false = 2 thrusters, true = 4 thrusters
 	bool Iteration = false; //false = do not iterate, true = iterate
 	double TenPercentDT = 26.0;	//Delta T of 10% thrust for the DPS
@@ -3330,7 +3330,7 @@ public:
 		int ReplaceCode = 0; //1-15
 		int Thruster = RTCC_ENGINETYPE_CSMSPS; //Thruster for the maneuver
 		int Attitude = RTCC_ATTITUDE_PGNS_EXDV;		//Attitude option
-		double UllageDT = -1;	//Delta T of Ullage
+		double UllageDT = 0.0;	//Delta T of Ullage
 		bool UllageQuads = true;//false = 2 thrusters, true = 4 thrusters
 		bool Iteration = false; //false = do not iterate, true = iterate
 		double TenPercentDT = 26.0;	//Delta T of 10% thrust for the DPS
