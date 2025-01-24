@@ -792,7 +792,7 @@ struct DKIOpt
 	bool LNH = false;
 	//Number of additional M-lines desired
 	int IDM = 0;
-	//Flag to determine where to place in multiple plans. false = same point, 1 = relative to NSR
+	//Flag to determine where to place NH in multiple plans. false = same point, true = relative to NSR
 	bool MNH = false;
 
 	//Skylab only
@@ -826,6 +826,8 @@ struct DKICommon
 	double NPC;
 	//M-line of maneuver line number at which rendezvous is to take place
 	double MI;
+	//Final M-line or rendezvous number
+	double MF;
 	//Delta time of lighting condition for TPI, in minutes!
 	double TLIT;
 	//Control flag for TPI time computation. 1 = Input TPI time, 2 = input TPF time, 3 = TPI at "TLIT" minutes into night, 
@@ -3217,6 +3219,10 @@ public:
 		double NPC = -1.0;
 		//M-line or maneuver line number at which rendezvous is to take place
 		double MI = 3.0;
+		//Number of additional M-lines desired
+		int IDM = 0;
+		//Flag to determine where to place NH in multiple plans. false = same point, true = relative to NSR
+		bool MNH = false;
 		//DT between NCC and NSR maneuver (Skylab)
 		double dt_NCC_NSR = 37.0*60.0;
 
@@ -4445,6 +4451,9 @@ public:
 		double NSR = 0.0;
 		double NPC = 0.0;
 		double TTPI = 0.0;
+		//DVs
+		double DV_CSM = 0.0;
+		double DV_LM = 0.0;
 	};
 
 	struct DKIDataTable
@@ -4484,6 +4493,8 @@ public:
 		RendezvousPlanningDisplayData();
 		int ID;
 		int M;
+		double DV_CSM;
+		double DV_LM;
 		double NC1;
 		double NH;
 		double NSR;

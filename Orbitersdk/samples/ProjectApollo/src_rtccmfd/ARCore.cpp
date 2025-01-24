@@ -3929,6 +3929,8 @@ int ARCore::subThread()
 		opt.NSR = GC->rtcc->med_k00.NSR;
 		opt.NPC = GC->rtcc->med_k00.NPC;
 		opt.MI = GC->rtcc->med_k00.MI;
+		opt.IDM = GC->rtcc->med_k00.IDM;
+		opt.MNH = GC->rtcc->med_k00.MNH;
 		if (GC->rtcc->med_k00.ChaserVehicle == RTCC_MPT_CSM)
 		{
 			opt.MV = 1;
@@ -4691,10 +4693,34 @@ int ARCore::subThread()
 		}
 		else
 		{
+			int plan;
+
+			plan = GC->rtcc->med_m70.Plan;
+
+			if (plan > 0) plan--; //For DKI
+
+			if (plan < 0 || plan > 6)
+			{
+				//Error
+				Result = DONE;
+				break;
+			}
+
+			RTCC::DKIDataBlock *block = &GC->rtcc->PZDKIT.Block[plan];
+
+			if (block->PlanStatus == 0)
+			{
+				//Error
+				Result = DONE;
+				break;
+			}
+
+			RTCC::DKIElementsBlock *elem = &GC->rtcc->PZDKIELM.Block[plan];
+
 			PMMMPTInput in;
 
 			//Get all required data for PMMMPT and error checking
-			if (GetVesselParameters(GC->rtcc->PZDKIT.Block[0].Display[0].VEH == RTCC_MPT_CSM, vesselisdocked, GC->rtcc->med_m70.Thruster, in.CONFIG, in.VC, in.CSMWeight, in.LMWeight))
+			if (GetVesselParameters(block->Display[0].VEH == RTCC_MPT_CSM, vesselisdocked, GC->rtcc->med_m70.Thruster, in.CONFIG, in.VC, in.CSMWeight, in.LMWeight))
 			{
 				//Error
 				Result = DONE;
@@ -4706,8 +4732,8 @@ int ARCore::subThread()
 			in.IgnitionTimeOption = GC->rtcc->med_m70.TimeFlag;
 			in.Thruster = GC->rtcc->med_m70.Thruster;
 
-			in.sv_before = GC->rtcc->PZDKIELM.Block[0].SV_before[0];
-			in.V_aft = GC->rtcc->PZDKIELM.Block[0].V_after[0];
+			in.sv_before = elem->SV_before[0];
+			in.V_aft = elem->V_after[0];
 			if (GC->rtcc->med_m70.UllageDT < 0)
 			{
 				in.DETU = GC->rtcc->SystemParameters.MCTNDU;

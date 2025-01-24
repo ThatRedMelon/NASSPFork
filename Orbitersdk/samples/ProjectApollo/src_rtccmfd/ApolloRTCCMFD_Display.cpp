@@ -2895,14 +2895,29 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		sprintf(Buffer, "%.0f", GC->rtcc->med_k00.MI);
 		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 
+		sprintf(Buffer, "%d", GC->rtcc->med_k00.IDM);
+		skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+
+		if (GC->rtcc->med_k00.IDM > 0)
+		{
+			if (GC->rtcc->med_k00.MNH)
+			{
+				skp->Text(10 * W / 16, 6 * H / 14, "Relative to NSR", 15);
+			}
+			else
+			{
+				skp->Text(10 * W / 16, 6 * H / 14, "Same place", 10);
+			}
+		}
+
 		if (GC->rtcc->med_k00.NPC > 0)
 		{
 			sprintf(Buffer, "%.2f", GC->rtcc->med_k00.NPC);
-			skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+			skp->Text(10 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
 		}
 		else
 		{
-			skp->Text(10 * W / 16, 6 * H / 14, "No NPC maneuver", 15);
+			skp->Text(10 * W / 16, 8 * H / 14, "No NPC maneuver", 15);
 		}
 
 	}
@@ -4729,18 +4744,21 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 	else if (screen == 55)
 	{
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
+		skp->Text(4 * W / 8, 1 * H / 14, "Transfer DKI, SPQ, or a Descent Plan (MED M70)", 46);
+		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
 		if (GC->rtcc->med_m70.Plan == 0)
 		{
-			skp->Text(4 * W / 8, 1 * H / 14, "SPQ Transfer (MED M70)", 22);
+			skp->Text(1 * W / 8, 2 * H / 14, "SPQ", 3);
 		}
-		else if (GC->rtcc->med_m70.Plan == 1)
+		else if (GC->rtcc->med_m70.Plan < 0)
 		{
-			skp->Text(4 * W / 8, 1 * H / 14, "DKI Transfer (MED M70)", 22);
+			skp->Text(1 * W / 8, 2 * H / 14, "Descent Plan", 12);
 		}
 		else
 		{
-			skp->Text(4 * W / 8, 1 * H / 14, "Descent Plan Transfer (MED M70)", 31);
+			sprintf_s(Buffer, "DKI Plan %d", GC->rtcc->med_m70.Plan);
+			skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
@@ -4750,55 +4768,55 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			if (GC->rtcc->med_m70.DeleteGET > 0)
 			{
 				GET_Display(Buffer, GC->rtcc->med_m70.DeleteGET);
-				skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+				skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 			}
 			else
 			{
-				skp->Text(1 * W / 8, 2 * H / 14, "Do not delete", 13);
+				skp->Text(1 * W / 8, 4 * H / 14, "Do not delete", 13);
 			}
 		}
 
 		ThrusterName(Buffer, GC->rtcc->med_m70.Thruster);
-		skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+		skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
 
 		if (GC->MissionPlanningActive)
 		{
 			MPTAttitudeName(Buffer, GC->rtcc->med_m70.Attitude);
-			skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+			skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
 		}
 
 		PrintUllage(Buffer, GC->rtcc->med_m70.Thruster, GC->rtcc->med_m70.UllageQuads, GC->rtcc->med_m70.UllageDT);
-		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
+		skp->Text(1 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
 
 		if (GC->rtcc->med_m70.Iteration)
 		{
-			skp->Text(1 * W / 8, 10 * H / 14, "Iterate", 7);
+			skp->Text(1 * W / 8, 12 * H / 14, "Iterate", 7);
 		}
 		else
 		{
-			skp->Text(1 * W / 8, 10 * H / 14, "Do not iterate", 14);
+			skp->Text(1 * W / 8, 12 * H / 14, "Do not iterate", 14);
 		}
 
 		if (GC->rtcc->med_m70.TimeFlag)
 		{
-			skp->Text(1 * W / 8, 12 * H / 14, "Impulsive TIG", 13);
+			skp->Text(5 * W / 8, 2 * H / 14, "Impulsive TIG", 13);
 		}
 		else
 		{
-			skp->Text(1 * W / 8, 12 * H / 14, "Optimum TIG", 11);
+			skp->Text(5 * W / 8, 2 * H / 14, "Optimum TIG", 11);
 		}
 
 		if (GC->rtcc->med_m70.Thruster == RTCC_ENGINETYPE_LMDPS)
 		{
 			sprintf_s(Buffer, "%.1f s", GC->rtcc->med_m70.TenPercentDT);
-			skp->Text(5 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3f", GC->rtcc->med_m70.DPSThrustFactor);
 			skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+			sprintf_s(Buffer, "%.3f", GC->rtcc->med_m70.DPSThrustFactor);
+			skp->Text(5 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
 		}
 
 		if (GC->MissionPlanningActive == false)
 		{
-			GET_Display(Buffer, G->P30TIG);
+			GET_Display2(Buffer, G->P30TIG);
 			skp->Text(5 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
 
 			skp->Text(5 * W / 8, 11 * H / 21, "DVX", 3);
@@ -10292,7 +10310,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(2 * W / 32, 9 * H / 32, "ID", 2);
 		skp->Text(4 * W / 32, 9 * H / 32, "M", 1);
 		skp->Text(7 * W / 32, 9 * H / 32, "DV CSM", 6);
-		skp->Text(11 * W / 32, 9 * H / 32, "DV LM", 5);
+		skp->Text(21 * W / 64, 9 * H / 32, "DV LM", 5);
 		skp->Text(27 * W / 64, 9 * H / 32, "NC1", 3);
 		skp->Text(32 * W / 64, 9 * H / 32, "NH", 2);
 		skp->Text(37 * W / 64, 9 * H / 32, "NCC", 3);
@@ -10306,28 +10324,33 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		for (int i = 0;i < GC->rtcc->PZRPDT.plans;i++)
 		{
 			sprintf_s(Buffer, "%d", GC->rtcc->PZRPDT.data[i].ID);
-			skp->Text(2 * W / 32, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skp->Text(2 * W / 32, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 			sprintf_s(Buffer, "%d", GC->rtcc->PZRPDT.data[i].M);
-			skp->Text(4 * W / 32, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skp->Text(4 * W / 32, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
+
+			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].DV_CSM);
+			skp->Text(7 * W / 32, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
+			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].DV_LM);
+			skp->Text(21 * W / 64, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 
 			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NC1);
-			skp->Text(27 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skp->Text(27 * W / 64, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NH);
-			skp->Text(32 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skp->Text(32 * W / 64, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 			if (GC->rtcc->PZRPDT.data[i].NCC >= 0.0)
 			{
 				sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NCC);
-				skp->Text(37 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+				skp->Text(37 * W / 64, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 			}
 			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NSR);
-			skp->Text(42 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skp->Text(42 * W / 64, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 			if (GC->rtcc->PZRPDT.data[i].NPC >= 0.0)
 			{
 				sprintf_s(Buffer, "%.2lf", GC->rtcc->PZRPDT.data[i].NPC);
-				skp->Text(47 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+				skp->Text(47 * W / 64, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 			}
 			GET_Display3(Buffer, GC->rtcc->PZRPDT.data[i].GETTPI);
-			skp->Text(28 * W / 32, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skp->Text(28 * W / 32, (11 + 2 * i) * H / 32, Buffer, strlen(Buffer));
 		}
 	}
 	else if (screen == 124)

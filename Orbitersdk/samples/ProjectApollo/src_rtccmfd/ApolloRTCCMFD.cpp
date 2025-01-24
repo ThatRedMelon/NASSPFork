@@ -3879,6 +3879,11 @@ bool ApolloRTCCMFD::set_ChooseSPQDKIThruster(std::string th)
 	return ThrusterType(th, GC->rtcc->med_m70.Thruster);
 }
 
+void ApolloRTCCMFD::menuM70SelectPlan()
+{
+	GenericIntInput(&GC->rtcc->med_m70.Plan, "-1 for descent plan, 0 for SPQ, 1-7 for DKI:", NULL, -1, 7);
+}
+
 void ApolloRTCCMFD::menuM70DeleteGET()
 {
 	bool MPTM70DeleteGETInput(void *id, char *str, void *data);
@@ -7460,6 +7465,16 @@ void ApolloRTCCMFD::menuDKINSRLine()
 void ApolloRTCCMFD::menuDKIMILine()
 {
 	GenericDoubleInput(&GC->rtcc->med_k00.MI, "Enter approximate TPI maneuver line point:");
+}
+
+void ApolloRTCCMFD::menuDKIAdditionalMLines()
+{
+	GenericIntInput(&GC->rtcc->med_k00.IDM, "Enter number of additional M-lines desired (0-6):", NULL, 0, 6);
+}
+
+void ApolloRTCCMFD::menuDKINHPlacement()
+{
+	GC->rtcc->med_k00.MNH = !GC->rtcc->med_k00.MNH;
 }
 
 void ApolloRTCCMFD::menuDKINPCLine()

@@ -427,6 +427,8 @@ public:
 	void menuDKICalc();
 	void menuDKINSRLine();
 	void menuDKIMILine();
+	void menuDKIAdditionalMLines();
+	void menuDKINHPlacement();
 	void menuDKINPCLine();
 	void menuSetSPQElevation();
 	void set_SPQElevation(double elev);
@@ -535,6 +537,7 @@ public:
 	void menuBackToSPQorDKIPage();
 	void menuChooseSPQDKIThruster();
 	bool set_ChooseSPQDKIThruster(std::string th);
+	void menuM70SelectPlan();
 	void menuM70DeleteGET();
 	void set_MPTM70DeleteGET(double get);
 	void menuM70CycleAttitude();
