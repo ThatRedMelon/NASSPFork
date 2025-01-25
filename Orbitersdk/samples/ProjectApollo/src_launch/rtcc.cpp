@@ -14084,7 +14084,7 @@ void RTCC::PMXSPT(std::string source, int n)
 		message.push_back(Buffer);
 		break;
 	case 61:
-		sprintf_s(Buffer, "VECTOR FOR FREEZE REQUEST IS WITHIN RANGE OF MANEUVER %d - CANNOT FREZE ON THIS VECTOR.", RTCCONLINEMON.IntBuffer[0]);
+		sprintf_s(Buffer, "VECTOR FOR FREEZE REQUEST IS WITHIN RANGE OF MANEUVER %d - CANNOT FREEZE ON THIS VECTOR.", RTCCONLINEMON.IntBuffer[0]);
 		message.push_back(Buffer);
 		break;
 	case 62:
