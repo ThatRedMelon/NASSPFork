@@ -1508,6 +1508,8 @@ RTCC::RendezvousEvaluationDisplay::RendezvousEvaluationDisplay()
 
 RTCC::RendezvousPlanningDisplayData::RendezvousPlanningDisplayData()
 {
+	DV_CSM = 0.0;
+	DV_LM = 0.0;
 	NC1 = 0.0;
 	NH = 0.0;
 	NSR = 0.0;
@@ -11113,11 +11115,15 @@ bool RTCC::DockingInitiationProcessor(DKIOpt opt)
 	//Threshold time of TPI
 	double TXX;
 	double TSR1, TSI, P, ECF2, ESF2, TR, DNSR, mu, Elev, theta_TPI, theta_S, SONEL, RTPM, TTPF, R_E, r_per, PMIN, NHS;
-	int ILOOP, i, block;
+	int ILOOP, i, block, J;
 	bool failed, INH, store, recycle, end;
 
 	PZDKIT.UpdatingIndicator = true;
 	PZDKIT.NumSolutions = 0;
+	for (i = 0; i < 7; i++)
+	{
+		PZDKIT.Block[i].PlanStatus = 0; //Invalidate all solutions
+	}
 
 	//Convert to aeg format
 	aeg_init = SVToAEG(opt.sv_CSM, 0.0, 1.0, 1.0); //TBD
@@ -11147,6 +11153,7 @@ bool RTCC::DockingInitiationProcessor(DKIOpt opt)
 	DKI.NCC = opt.NCC;
 	DKI.NPC = opt.NPC;
 	DKI.MI = opt.MI;
+	DKI.MF = opt.MI + (double)opt.IDM;
 
 	if (opt.sv_CSM.RBI == BODY_EARTH)
 	{
@@ -11274,7 +11281,6 @@ bool RTCC::DockingInitiationProcessor(DKIOpt opt)
 	sv_init[I] = sv[I];
 
 PMMDKI_2_1:
-
 	//Take maneuvering vehicle to arrival at NSR
 	sv[M].TIMA = 3;
 	sv[M].Item8 = UOCI;
@@ -11354,7 +11360,6 @@ PMMDKI_2_1:
 	//J = 4: NH, NSR
 	//J = 5: NSR
 	//J = 10: NC1, NH, NCC, NSR (Skylab)
-	int J;
 
 	if (opt.I4)
 	{
@@ -11471,6 +11476,8 @@ PMMDKI_2_1:
 		MATRIX3 Q_Xx;
 		double DH, Phase, HA, HP;
 
+		PZDKIT.Block[block].DV_CSM = PZDKIT.Block[block].DV_LM = 0.0;
+
 		for (i = 0;i < PZDKIT.Block[block].NumMan;i++)
 		{
 			PCPICK(aegh, DKI.sv_after[i], sv[I], DH, Phase, HA, HP);
@@ -11485,6 +11492,15 @@ PMMDKI_2_1:
 			PZDKIT.Block[block].Display[i].dv = length(PZDKIT.Block[block].Display[i].DV_LVLH);
 			PZDKIT.Block[block].Display[i].Yaw = atan2(PZDKIT.Block[block].Display[i].DV_LVLH.y, PZDKIT.Block[block].Display[i].DV_LVLH.x);
 			PZDKIT.Block[block].Display[i].Pitch = atan2(-PZDKIT.Block[block].Display[i].DV_LVLH.z, sqrt(pow(PZDKIT.Block[block].Display[i].DV_LVLH.x, 2) + pow(PZDKIT.Block[block].Display[i].DV_LVLH.y, 2)));
+		
+			if (PZDKIT.Block[block].Display[i].VEH == RTCC_MPT_CSM)
+			{
+				PZDKIT.Block[block].DV_CSM += PZDKIT.Block[block].Display[i].dv;
+			}
+			else
+			{
+				PZDKIT.Block[block].DV_LM += PZDKIT.Block[block].Display[i].dv;
+			}
 		}
 		block++;
 	}
@@ -11496,7 +11512,7 @@ PMMDKI_2_1:
 		{
 			DKI.NH = NHS;
 		}
-		if (opt.IDM > DKI.MI)
+		if (DKI.MF > DKI.MI)
 		{
 			DKI.MI += 1.0;
 			DKI.NCC += 1.0;
@@ -22863,12 +22879,19 @@ int RTCC::PMMXFR(int id, void *data)
 			{
 				num_man = 1;//PZLDPELM.num_man;
 			}
-			else if (inp->Plan == 0)
-			{
-				num_man = 1;//PZDKIT.Block[0].NumMan;
-			}
 			else
 			{
+				if (inp->Plan == 0)
+				{
+					//SPQ plan is in first slot of DKI table
+					inp->Plan = 1;
+				}
+				//Does this plan exist?
+				if (PZDKIT.Block[inp->Plan - 1].PlanStatus == 0)
+				{
+					PMXSPT("PMMXFR", 38);
+					return 38;
+				}
 				num_man = 1;//PZDKIT.Block[inp->Plan - 1].NumMan;
 			}
 		}
@@ -22919,9 +22942,9 @@ int RTCC::PMMXFR(int id, void *data)
 			}
 			else
 			{
-				GMTI = PZDKIELM.Block[0].SV_before[0].GMT;
-				purpose = PZDKIT.Block[0].Display[0].Man_ID;
-				plan = PZDKIT.Block[0].Display[0].VEH;
+				GMTI = PZDKIELM.Block[inp->Plan - 1].SV_before[0].GMT;
+				purpose = PZDKIT.Block[inp->Plan - 1].Display[0].Man_ID;
+				plan = PZDKIT.Block[inp->Plan - 1].Display[0].VEH;
 			}
 		}
 		else if (id == 42)
@@ -23037,8 +23060,8 @@ int RTCC::PMMXFR(int id, void *data)
 			}
 			else
 			{
-				in.sv_before = PZDKIELM.Block[0].SV_before[0];
-				in.V_aft = PZDKIELM.Block[0].V_after[0];
+				in.sv_before = PZDKIELM.Block[inp->Plan - 1].SV_before[0];
+				in.V_aft = PZDKIELM.Block[inp->Plan - 1].V_after[0];
 			}
 		}
 		else
@@ -30899,6 +30922,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		}
 
 		inp.IterationFlag[0] = med_m70.Iteration;
+		if (med_m70.Plan > 7) return 2;
 		inp.Plan = med_m70.Plan;
 		inp.ReplaceCode = 0;
 		inp.Thruster[0] = med_m70.Thruster;
@@ -35232,6 +35256,7 @@ void RTCC::PMDRPT()
 	}
 
 	PZRPDT.plans = PZDKIT.NumSolutions;
+
 	for (int i = 0;i < PZDKIT.NumSolutions;i++)
 	{
 		PZRPDT.data[i].ID = i + 1;
@@ -35242,6 +35267,8 @@ void RTCC::PMDRPT()
 		PZRPDT.data[i].NPC = PZDKIT.Block[i].NPC;
 		PZRPDT.data[i].NCC = PZDKIT.Block[i].NCC;
 		PZRPDT.data[i].GETTPI = GETfromGMT(PZDKIT.Block[i].TTPI);
+		PZRPDT.data[i].DV_CSM = PZDKIT.Block[i].DV_CSM / 0.3048;
+		PZRPDT.data[i].DV_LM = PZDKIT.Block[i].DV_LM / 0.3048;
 	}
 }
 
