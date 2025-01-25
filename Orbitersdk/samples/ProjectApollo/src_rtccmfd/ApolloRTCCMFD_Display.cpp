@@ -6717,9 +6717,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 	else if (screen == 75)
 	{
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
-		skp->Text(4 * W / 8, 1 * H / 14, "ON LINE MONITOR (MSK 1629)", 28);
+		skp->Text(4 * W / 8, 1 * H / 28, "ON LINE MONITOR (MSK 1629)", 28);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
-		skp->SetFont(font2);
+		skp->SetFont(font4);
 
 		unsigned line = 0;
 
