@@ -168,10 +168,12 @@ void J2Engine::Timestep(double simdt)
 		ThrustTimer = 0.0;
 	}
 
+	/*
 	if (EngineFailed)
 	{
 		sprintf(oapiDebugString(), "EngineStart %d EngineStop %d EngineRunning %d ThrustTimer %lf ThrustLevel %lf", EngineStart, EngineStop, EngineRunning, ThrustTimer, ThrustLevel);
 	}
+	*/
 }
 
 void J2Engine::SetThrusterDir(double beta_y, double beta_p)
