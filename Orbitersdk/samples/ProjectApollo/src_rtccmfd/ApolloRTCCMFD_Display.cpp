@@ -11380,7 +11380,7 @@ void ApolloRTCCMFD::PrintUllage(char *Buffer, int Thruster, bool Use4Jets, doubl
 		}
 		else if (Duration > 1.0)
 		{
-			sprintf_s(Buffer, 127, "%s, %.0lfs ullage", Buff2, Duration);
+			sprintf_s(Buffer, 127, "%s, %.1lfs", Buff2, Duration);
 		}
 		else if (Duration > 0.0)
 		{
