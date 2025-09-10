@@ -5,8 +5,8 @@ name: CMake on a single platform
 on:
   push:
     branches: 
-        -CMake
-        -CMakeTest
+        - "CMake"
+        - "CMakeTest"
 
 env:
   GH_TOKEN: ${{github.token}}
