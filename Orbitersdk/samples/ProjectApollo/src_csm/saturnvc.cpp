@@ -5742,17 +5742,8 @@ void Saturn::DefineVCAnimations()
 
 	Altimeter.DefineVCAnimations(vcidx);
 
-	MainPanelVC.DefineVCAnimations(vcidx);
+	// Ordeal Animation
 
-	InitFDAI(vcidx);
-
-//******************************************************************************************************************
-// Puting Code for the Ordeal stow animation here, to test if the problem with the switches floating away is solved.
-//******************************************************************************************************************
-
-// Ordeal Animation
-
-	// Extra Testing Code for the ORDEAL Floating switches bug by Jordan
 	static UINT ordealSw01 = VC_GRP_Sw_P13_01_d;
 	static UINT ordealSw02 = VC_GRP_Sw_P13_02_d;
 	static UINT ordealSw03 = VC_GRP_Sw_P13_03_d;
@@ -5824,7 +5815,10 @@ void Saturn::DefineVCAnimations()
 	// *** CHEATING CODE BECAUSE THE CABLE STICKS OUT OF THE STORAGE COMPARTMENT *** //
 	AddAnimationComponent(ordealMeshAnim, 0.50,  0.80, &ordealMesh_S01); // Scale it to 70%
 
-	/// END TEST by JORDAN
+
+	MainPanelVC.DefineVCAnimations(vcidx);
+
+	InitFDAI(vcidx);
 }
 
 void Saturn::InitFDAI(UINT mesh)
