@@ -2,7 +2,7 @@ name: CMake on a single platform (x86)
 
 on:
   push:
-    branches: [ "CMake-Alpha-ASTP" ]
+    branches: [ "VHFAutobuild" ]
 
 env:
   GH_TOKEN: ${{github.token}}
