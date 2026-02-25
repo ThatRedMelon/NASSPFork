@@ -122,6 +122,7 @@ add_subdirectory(Project/SIVB)
 add_subdirectory(Project/Skylab)
 add_subdirectory(Project/sm)
 add_subdirectory(Project/VAB)
+add_subdirectory(Project/VHFDummy)
 
 
 # Copy all relevant documents/scenarios/sounds/configs from this
